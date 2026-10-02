@@ -1,0 +1,270 @@
+{
+ "_palette": {
+  "file": "palette.png",
+  "count": 45
+ },
+ "tree_default": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_default.obj",
+  "height": 8.0,
+  "radius": 2.339,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_oak": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_oak.obj",
+  "height": 9.0,
+  "radius": 3.591,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_tall": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_tall.obj",
+  "height": 11.0,
+  "radius": 1.989,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_detailed": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_detailed.obj",
+  "height": 8.0,
+  "radius": 3.42,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_fat": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_fat.obj",
+  "height": 7.0,
+  "radius": 3.039,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_simple": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_simple.obj",
+  "height": 6.5,
+  "radius": 1.159,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_thin": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_thin.obj",
+  "height": 9.0,
+  "radius": 2.773,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_cone": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_cone.obj",
+  "height": 8.0,
+  "radius": 2.095,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "pine_tall_a": {
+  "category": "tree",
+  "align": false,
+  "file": "pine_tall_a.obj",
+  "height": 12.0,
+  "radius": 2.159,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "pine_tall_b": {
+  "category": "tree",
+  "align": false,
+  "file": "pine_tall_b.obj",
+  "height": 11.0,
+  "radius": 1.564,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "pine_default_a": {
+  "category": "tree",
+  "align": false,
+  "file": "pine_default_a.obj",
+  "height": 9.0,
+  "radius": 2.19,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "pine_round_c": {
+  "category": "tree",
+  "align": false,
+  "file": "pine_round_c.obj",
+  "height": 8.0,
+  "radius": 2.343,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "tree_default_fall": {
+  "category": "tree",
+  "align": false,
+  "file": "tree_default_fall.obj",
+  "height": 8.0,
+  "radius": 2.339,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "bush_large": {
+  "category": "bush",
+  "align": false,
+  "file": "bush_large.obj",
+  "height": 1.3,
+  "radius": 1.345,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "bush": {
+  "category": "bush",
+  "align": false,
+  "file": "bush.obj",
+  "height": 1.0,
+  "radius": 1.146,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "bush_detailed": {
+  "category": "bush",
+  "align": false,
+  "file": "bush_detailed.obj",
+  "height": 1.2,
+  "radius": 1.419,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "rock_a": {
+  "category": "rock",
+  "align": false,
+  "file": "rock_a.obj",
+  "height": 0.884,
+  "radius": 0.939,
+  "source": "Kenney Survival Kit"
+ },
+ "rock_b": {
+  "category": "rock",
+  "align": false,
+  "file": "rock_b.obj",
+  "height": 0.552,
+  "radius": 0.728,
+  "source": "Kenney Survival Kit"
+ },
+ "rock_c": {
+  "category": "rock",
+  "align": false,
+  "file": "rock_c.obj",
+  "height": 1.106,
+  "radius": 1.048,
+  "source": "Kenney Survival Kit"
+ },
+ "stump_round": {
+  "category": "object",
+  "align": false,
+  "file": "stump_round.obj",
+  "height": 0.5,
+  "radius": 0.594,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "log_stack": {
+  "category": "object",
+  "align": false,
+  "file": "log_stack.obj",
+  "height": 0.9,
+  "radius": 1.075,
+  "source": "Kenney Nature Kit 2.1"
+ },
+ "barrier_red": {
+  "category": "object",
+  "align": true,
+  "file": "barrier_red.obj",
+  "height": 1.05,
+  "radius": 1.114,
+  "source": "Kenney Racing Kit"
+ },
+ "barrier_white": {
+  "category": "object",
+  "align": true,
+  "file": "barrier_white.obj",
+  "height": 1.05,
+  "radius": 1.114,
+  "source": "Kenney Racing Kit"
+ },
+ "barrier_wall": {
+  "category": "object",
+  "align": true,
+  "file": "barrier_wall.obj",
+  "height": 0.394,
+  "radius": 1.511,
+  "source": "Kenney Racing Kit"
+ },
+ "fence_straight": {
+  "category": "object",
+  "align": true,
+  "file": "fence_straight.obj",
+  "height": 1.5,
+  "radius": 1.501,
+  "source": "Kenney Racing Kit"
+ },
+ "billboard": {
+  "category": "structure",
+  "align": false,
+  "file": "billboard.obj",
+  "height": 5.0,
+  "radius": 2.769,
+  "source": "Kenney Racing Kit"
+ },
+ "light_post": {
+  "category": "structure",
+  "align": false,
+  "file": "light_post.obj",
+  "height": 7.0,
+  "radius": 1.725,
+  "source": "Kenney Racing Kit"
+ },
+ "flag_red": {
+  "category": "structure",
+  "align": false,
+  "file": "flag_red.obj",
+  "height": 4.0,
+  "radius": 0.321,
+  "source": "Kenney Racing Kit"
+ },
+ "grandstand": {
+  "category": "structure",
+  "align": true,
+  "file": "grandstand.obj",
+  "height": 10.755,
+  "radius": 8.485,
+  "source": "Kenney Racing Kit"
+ },
+ "barrel": {
+  "category": "object",
+  "align": false,
+  "file": "barrel.obj",
+  "height": 0.9,
+  "radius": 0.438,
+  "source": "Kenney Survival Kit"
+ },
+ "tent": {
+  "category": "structure",
+  "align": false,
+  "file": "tent.obj",
+  "height": 2.6,
+  "radius": 2.099,
+  "source": "Kenney Survival Kit"
+ },
+ "signpost": {
+  "category": "object",
+  "align": false,
+  "file": "signpost.obj",
+  "height": 1.8,
+  "radius": 0.427,
+  "source": "Kenney Survival Kit"
+ },
+ "bucket": {
+  "category": "object",
+  "align": false,
+  "file": "bucket.obj",
+  "height": 0.4,
+  "radius": 0.212,
+  "source": "Kenney Survival Kit"
+ }
+}

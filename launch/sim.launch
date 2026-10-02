@@ -1,0 +1,28 @@
+<launch>
+  <!-- MuJoCo Formula Student monocular-camera simulator.
+       Requires: this repo is a ROS package named `fs_mono_cam_sim` (package.xml + CMakeLists.txt, or just a
+       package.xml, on ROS_PACKAGE_PATH) so that scripts/sim_node.py is found; or run it directly:
+           rosrun-free alternative:  python3 scripts/sim_node.py _config_dir:=/path/to/config _seed:=3
+       Python deps (mujoco, numpy, opencv-python, pyyaml) must be installed for ROS's python3. -->
+  <arg name="config_dir" default=""/>      <!-- empty = <repo>/config -->
+  <arg name="seed" default=""/>            <!-- empty = `seed` in perception.yaml -->
+  <arg name="output" default="screen"/>
+  <arg name="mujoco_gl" default="egl"/>    <!-- egl = headless Linux; glfw if you have a display -->
+
+  <node pkg="fs_mono_cam_sim" type="sim_node.py" name="fs_mono_cam_sim" output="$(arg output)" required="true">
+    <env name="MUJOCO_GL" value="$(arg mujoco_gl)"/>
+    <param name="config_dir" value="$(arg config_dir)"/>
+    <param name="seed" value="$(arg seed)"/>
+    <!-- Topic names/frame/fps/quality all come from config/perception.yaml + camera.yaml.
+         Remap here if you prefer, e.g. to feed the depth-perception pipeline: -->
+    <!-- <remap from="/camera/image_raw/compressed" to="/zed2/zed_node/left/image_rect_color_compressed"/> -->
+    <!-- <remap from="/camera/bounding_boxes"        to="/stereo_cone_perception/bounding_boxes"/> -->
+  </node>
+
+  <!-- Example: run together with the sibling depth-perception pipeline
+       (Monocular-Depth-perception-for-Cones, package homographic_mono_cam_depth_perception).
+       Either remap as above, or change image_topic/compressed_topic/bbox_topic in perception.yaml.
+
+  <include file="$(find homographic_mono_cam_depth_perception)/launch/<its launch file>.launch"/>
+  -->
+</launch>

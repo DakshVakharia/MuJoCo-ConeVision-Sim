@@ -21,6 +21,13 @@ bbox:
     orange:     [1.0, 0.2, 0.0]
     orange_big: [1.0, 0.2, 0.0]
 
+# Rendering / simulation extras (added by the render module).
+render:
+  msaa_samples: null          # RGB anti-aliasing samples (0/2/4/8); null = use the scene XML value.
+                              # Lower (0) is much faster on weak GPUs; segmentation is never multisampled.
+
+seed: 0                       # RNG seed for bbox noise/dropout (override with the ~seed ROS param)
+
 ros:
   frame_id: front_cam_optical
 

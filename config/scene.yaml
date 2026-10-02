@@ -1,30 +1,70 @@
 # MuJoCo scene: ground, sky, lighting, cones and roadside scenery.
 scene:
   ground:
-    margin_m: 40.0              # ground plane extends this far beyond the track
-    texture: checker            # checker | asphalt | grass (procedural, no download needed)
-    rgb1: [0.30, 0.30, 0.32]
+    margin_m: 200.0             # ground plane extends this far beyond the track (>= camera far_clip hides the edge)
+    texture: grass              # checker | asphalt | grass (procedural PNG, generated on demand)
+    rgb1: [0.30, 0.30, 0.32]    # checker colours
     rgb2: [0.27, 0.27, 0.29]
+    tile_m: 6.0                 # world size of one texture tile (metres)
+    # Darker asphalt ribbon laid along the centerline (the racing surface).
+    track_strip:
+      enabled: true
+      texture: asphalt          # checker | asphalt | grass
+      extra_width_m: 1.0        # extends this far beyond the outermost cone line each side
+      height_m: 0.02            # the ground plane sits this far BELOW the strip top (z=0) - avoids z-fighting at long range
 
   lighting:
     sun_direction: [-0.4, 0.3, -1.0]
-    sun_diffuse: [0.9, 0.9, 0.85]
-    ambient: [0.35, 0.35, 0.35]
-    shadows: true
+    sun_diffuse: [0.78, 0.76, 0.70]
+    sun_specular: [0.1, 0.1, 0.1]
+    ambient: [0.28, 0.30, 0.34]
+    shadows: false              # sun shadows roughly halve the render fps (~65 -> ~30 fps at 1280x720)
+    shadow_size: 4096           # shadow map resolution (visual/quality shadowsize)
+    multisample: 4              # offscreen anti-aliasing samples (0 = off); costs fps
+    shadow_clip: auto           # half-size (m) of the sun shadow map; 'auto' = track radius + 25 m, or a number
 
   sky:
-    rgb1: [0.55, 0.70, 0.95]
-    rgb2: [0.90, 0.95, 1.00]
+    rgb1: [0.30, 0.50, 0.85]    # zenith
+    rgb2: [0.78, 0.88, 0.98]    # horizon
+
+  haze:                         # optional distance fog (cheap, hides the end of the world)
+    enabled: true
+    rgb: [0.78, 0.86, 0.95]
+    start_m: 70.0
+    end_m: 400.0                # fog is fully opaque here; far_clip usually cuts before
 
   cones:
     # FS-rules cone sizes (metres)
     small: {base_width: 0.228, height: 0.325}
     big:   {base_width: 0.285, height: 0.505}
+    plate_thickness: 0.015
+    bottom_radius_frac: 0.40    # cone radius at the plate, as fraction of base_width
+    top_radius_frac: 0.10       # cone radius at the tip, as fraction of base_width
+    segments: 28                # polygon count around the cone
+    # Stripe(s) as fractions of cone height: [bottom, top] bands
+    stripes:
+      small: [[0.30, 0.58]]
+      big: [[0.20, 0.36], [0.46, 0.62]]
+    colors:                     # rgb 0..1
+      blue: [0.04, 0.17, 0.85]
+      yellow: [1.0, 0.80, 0.0]
+      orange: [1.0, 0.33, 0.02]
+      orange_big: [1.0, 0.33, 0.02]
+      stripe_light: [0.95, 0.95, 0.95]   # on blue / orange cones
+      stripe_dark: [0.03, 0.03, 0.03]    # on yellow cones
 
   scenery:
+    enabled: true
     seed: 7
     num_trees: 40
-    num_objects: 25             # tyres, barriers, bins, boxes, ...
-    min_dist_from_track_m: 4.0  # keep scenery off the racing surface
+    num_objects: 25             # barriers, barrels, tyre stacks, boxes, tents, bushes, rocks ...
+    num_far_trees: 60           # tree line at far_min..far_max (background depth cue for the camera)
+    far_min_dist_m: 60.0
+    far_max_dist_m: 140.0
+    min_dist_from_track_m: 4.0  # keep scenery off the racing surface (measured from the centerline)
     max_dist_from_track_m: 30.0
-    asset_dir: assets/scenery   # downloaded CC0 meshes; procedural fallback if empty
+    cone_clearance_m: 2.0       # nothing closer than this to any cone (object footprint added on top)
+    spacing_m: 0.4              # extra gap between scenery footprints
+    scale_range: [0.8, 1.25]    # random uniform scale (quantised to 3 steps, 1 mesh asset per step)
+    asset_dir: assets/scenery   # converted CC0 meshes (catalog.json); procedural fallback if missing
+    use_assets: true            # false forces the procedural fallback (cylinder trunks, boxes, ...)

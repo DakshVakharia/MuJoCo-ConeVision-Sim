@@ -8,5 +8,17 @@ track:
   target_length_m: 300.0    # approximate centreline length
   min_corner_radius_m: 5.0  # FS hairpins are >= 4.5 m outer radius
 
-  # backend-specific knobs go here (filled in by the track generator)
-  backend_params: {}
+  # backend-specific knobs (all optional; defaults shown)
+  backend_params:
+    max_attempts: 500         # candidate loops tried per backend before giving up / falling back
+    scale_range: [0.6, 1.8]   # raw loop is uniformly scaled to target_length_m; reject if factor outside
+    third_party:              # vendored mvanlobensels/random-track-generator (Voronoi)
+      mode: random            # random (rambling) | expand (roundish) | extend (elongated)
+      n_points: 30            # Voronoi seed points
+      n_regions: 8            # Voronoi regions merged into the track outline (more = bigger/more complex)
+      length_per_bound: 3.0   # raw length ~ this * box size; sets the generation box from target_length_m
+      radius_margin: 1.05     # curvature pruning uses min_corner_radius_m * this
+    builtin:                  # hull + midpoint displacement + periodic spline
+      n_points: [14, 24]      # random point count range
+      displacement: 0.45      # midpoint displacement (higher = more wiggly)
+      smoothing: 1.0          # spline smoothing factor

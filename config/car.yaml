@@ -8,13 +8,22 @@ car:
   wheel_radius: 0.23
   wheel_width: 0.20
   body_color: [0.85, 0.10, 0.10, 1.0]
+  accent_color: [0.95, 0.95, 0.95, 1.0]   # wing flaps, shoulders
+  helmet_color: [0.95, 0.80, 0.10, 1.0]
+  camera_housing: true      # small camera box + mast behind the camera plane (never in the image)
 
   # Driving: the car follows the track centreline kinematically (no tyre physics).
   driver:
     speed_mps: 8.0            # constant target speed
     lateral_offset_m: 0.0     # drive this far left (+) of the centreline
-    lookahead_m: 4.0          # pure-pursuit lookahead
+    lookahead_m: 4.0          # heading = chord over this window centred on the car (smooth pure-pursuit-like)
     start_s_m: 0.0            # start this far along the centreline from the start line
+    centerline_smoothing_m: 0.0  # gaussian smoothing of the resampled centreline (0 = off)
+    # Optional curvature-limited speed profile: v(s) = min(speed_mps, sqrt(a_lat / |curvature|)),
+    # then forward/backward passes limited by max_accel / max_brake. null = constant speed.
+    max_lateral_accel_mps2: null
+    max_accel_mps2: 4.0
+    max_brake_mps2: 6.0
 
   # Optional body motion so the camera is not perfectly stable
   # (exercises IMU tilt correction in the depth pipeline).

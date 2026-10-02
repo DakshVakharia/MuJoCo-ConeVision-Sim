@@ -49,3 +49,19 @@ tests/
 - `car.driver.CenterlineDriver(track, car_cfg).state_at(t) -> CarState(x, y, yaw, roll, pitch, v, yaw_rate)`
   — pure function of sim time.
 - Image coordinates: pixels, origin top-left, u right, v down, full camera resolution.
+- Car pose -> MuJoCo: `car.camera_geometry.car_mocap_pose(state) -> (pos, quat_wxyz)` into `data.mocap_*[0]`.
+- Camera intrinsics go into MuJoCo via `resolution/sensorsize/focalpixel/principalpixel`;
+  `principalpixel = (w/2 - cx, h/2 - cy)` (sign verified against renders, < 1 px error).
+
+## Gotchas learned during the build
+- `statistic center` is the track centre (not 0 0 0) because the sun shadow map is centred there; extent stays 1.
+- Ground plane is 2 cm below the asphalt strip top (z=0); cones/car stand at z=0.
+- Cones have an axis-aligned square base plate: a bbox's bottom edge is the plate's near edge, not the
+  cone centre (~half plate width closer). Tests compare against projected plate corners.
+- Rendering on this Windows laptop defaults to the Intel iGPU (~15-20 fps full pipeline at 1280x720);
+  RGB + segmentation share one GL context with two mjrContexts (separate contexts were ~3x slower).
+- `build_scene_xml` without `out_dir` writes textures to `generated/scene_assets/textures`.
+- `scripts/sim_node.py` is untested against real ROS; message construction is in `render/rosmsgs.py`
+  (tested with fake msg classes).
+- Third-party track generator is vendored and modified in `track/third_party/random_track_generator/`
+  (see its README for upstream commit and changes).
