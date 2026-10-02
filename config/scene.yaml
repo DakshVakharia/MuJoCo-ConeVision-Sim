@@ -1,0 +1,30 @@
+# MuJoCo scene: ground, sky, lighting, cones and roadside scenery.
+scene:
+  ground:
+    margin_m: 40.0              # ground plane extends this far beyond the track
+    texture: checker            # checker | asphalt | grass (procedural, no download needed)
+    rgb1: [0.30, 0.30, 0.32]
+    rgb2: [0.27, 0.27, 0.29]
+
+  lighting:
+    sun_direction: [-0.4, 0.3, -1.0]
+    sun_diffuse: [0.9, 0.9, 0.85]
+    ambient: [0.35, 0.35, 0.35]
+    shadows: true
+
+  sky:
+    rgb1: [0.55, 0.70, 0.95]
+    rgb2: [0.90, 0.95, 1.00]
+
+  cones:
+    # FS-rules cone sizes (metres)
+    small: {base_width: 0.228, height: 0.325}
+    big:   {base_width: 0.285, height: 0.505}
+
+  scenery:
+    seed: 7
+    num_trees: 40
+    num_objects: 25             # tyres, barriers, bins, boxes, ...
+    min_dist_from_track_m: 4.0  # keep scenery off the racing surface
+    max_dist_from_track_m: 30.0
+    asset_dir: assets/scenery   # downloaded CC0 meshes; procedural fallback if empty

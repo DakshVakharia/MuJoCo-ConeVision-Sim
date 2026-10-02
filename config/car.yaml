@@ -1,0 +1,24 @@
+# Formula-style car: body geometry and how it drives around the track.
+car:
+  # Geometry (metres), roughly a Formula Student car
+  length: 2.9
+  width: 1.4
+  wheelbase: 1.55
+  track_width: 1.2
+  wheel_radius: 0.23
+  wheel_width: 0.20
+  body_color: [0.85, 0.10, 0.10, 1.0]
+
+  # Driving: the car follows the track centreline kinematically (no tyre physics).
+  driver:
+    speed_mps: 8.0            # constant target speed
+    lateral_offset_m: 0.0     # drive this far left (+) of the centreline
+    lookahead_m: 4.0          # pure-pursuit lookahead
+    start_s_m: 0.0            # start this far along the centreline from the start line
+
+  # Optional body motion so the camera is not perfectly stable
+  # (exercises IMU tilt correction in the depth pipeline).
+  body_motion:
+    pitch_amplitude_deg: 0.0
+    roll_amplitude_deg: 0.0
+    frequency_hz: 1.5

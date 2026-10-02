@@ -1,0 +1,33 @@
+# The car's single forward-facing, long-range camera.
+# There is NO stereo and NO LiDAR on this car - this camera is the only sensor.
+camera:
+  name: front_cam
+
+  # Image size in pixels (quality knob #1).
+  width: 1280
+  height: 720
+
+  # Pinhole intrinsics in pixels.
+  # Set fx and fy to null to derive them from hfov_deg instead.
+  fx: 1100.0          # long-range lens: ~60 deg horizontal FOV at 1280 px
+  fy: 1100.0
+  cx: 640.0
+  cy: 360.0
+  hfov_deg: null
+
+  # Extrinsics: camera pose in the car's base_link frame.
+  # base_link = point on the ground under the car's geometric centre,
+  #             x forward, y left, z up (metres).
+  x: 0.40
+  y: 0.0
+  z: 1.15
+  roll_deg: 0.0
+  pitch_deg: 4.0      # positive = camera tilted DOWN towards the ground
+  yaw_deg: 0.0        # positive = camera turned LEFT
+
+  near_clip: 0.05     # metres
+  far_clip: 150.0     # metres; long-range camera
+
+  # Streaming (quality knob #2 and #3).
+  fps: 60             # frames published per (simulated) second
+  jpeg_quality: 90    # 1-100, used only for the compressed image topic

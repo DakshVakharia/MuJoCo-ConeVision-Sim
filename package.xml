@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>fs_mono_cam_sim</name>
+  <version>0.1.0</version>
+  <description>MuJoCo simulator of a Formula Student car with a single long-range monocular camera: random cone tracks, RGB feed and ground-truth "YOLO-style" bounding boxes over ROS.</description>
+  <maintainer email="daksh.vakharia@gmail.com">Daksh Vakharia</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>foxglove_msgs</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+</package>

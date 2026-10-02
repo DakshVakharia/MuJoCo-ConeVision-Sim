@@ -1,0 +1,41 @@
+# Fake "YOLO" bounding-box publisher. No neural network: boxes are computed
+# exactly from MuJoCo's segmentation render (so occluded cones are handled),
+# then optionally degraded with noise to look like a real detector.
+bbox:
+  min_visible_pixels: 25      # cones with fewer visible pixels are not reported
+  min_box_height_px: 6        # tiny far-away boxes are dropped
+  max_range_m: 60.0           # cones farther than this from the camera are dropped
+
+  # Detector-noise model (all 0 = perfect ground truth).
+  center_jitter_px: 0.0       # std-dev of Gaussian noise on box centre
+  size_jitter_frac: 0.0       # std-dev of relative noise on box width/height
+  dropout_prob: 0.0           # probability a visible cone is missed in a frame
+  latency_ms: 0               # boxes are stamped with the image time but published this much later
+
+  # outline_color (RGB, 0-1) per cone class. These MUST satisfy the colour
+  # thresholds in Monocular-Depth-perception-for-Cones/cone_base_detector.cpp:
+  #   orange r>0.5 g<0.3 b<0.3 | blue r<0.3 g<0.3 b>0.5 | yellow r>0.5 g>0.5 b<0.3
+  outline_colors:
+    blue:       [0.0, 0.0, 1.0]
+    yellow:     [1.0, 1.0, 0.0]
+    orange:     [1.0, 0.2, 0.0]
+    orange_big: [1.0, 0.2, 0.0]
+
+ros:
+  frame_id: front_cam_optical
+
+  # The two main outputs.
+  publish_raw: true
+  image_topic: /camera/image_raw                    # sensor_msgs/Image (rgb8)
+  publish_compressed: true
+  compressed_topic: /camera/image_raw/compressed    # sensor_msgs/CompressedImage (jpeg)
+  bbox_topic: /camera/bounding_boxes                # foxglove_msgs/ImageMarkerArray
+
+  # Optional ground-truth extras (off by default; the car has only a camera).
+  publish_odom: false
+  odom_topic: /sim/ground_truth/odom                # nav_msgs/Odometry
+  publish_imu: false
+  imu_topic: /sim/imu                               # sensor_msgs/Imu
+
+  realtime_factor: 1.0        # 1.0 = real time, 0.5 = half speed
+  publish_clock: false        # publish /clock (sim time) for use_sim_time setups

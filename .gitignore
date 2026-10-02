@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+generated/
+*.mp4
+*.bag
+build/
+devel/
+.pytest_cache/

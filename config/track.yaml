@@ -1,0 +1,12 @@
+# Random Formula-Student track generation.
+track:
+  seed: 42                  # same seed -> same track; null = random each run
+  backend: auto             # auto | third_party | builtin  (auto = third_party, fall back to builtin)
+
+  track_width_m: 3.5        # distance between blue and yellow cone lines (FS min 3 m)
+  cone_spacing_m: 4.0       # spacing along each boundary (FS max 5 m)
+  target_length_m: 300.0    # approximate centreline length
+  min_corner_radius_m: 5.0  # FS hairpins are >= 4.5 m outer radius
+
+  # backend-specific knobs go here (filled in by the track generator)
+  backend_params: {}

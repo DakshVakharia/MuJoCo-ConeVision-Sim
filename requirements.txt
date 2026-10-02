@@ -1,0 +1,6 @@
+mujoco>=3.2
+numpy
+pyyaml
+opencv-python
+scipy
+pytest
