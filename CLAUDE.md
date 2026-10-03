@@ -53,6 +53,21 @@ tests/
 - Camera intrinsics go into MuJoCo via `resolution/sensorsize/focalpixel/principalpixel`;
   `principalpixel = (w/2 - cx, h/2 - cy)` (sign verified against renders, < 1 px error).
 
+## C++ runtime (720p @ 120 fps target)
+- Python exports a bundle once: `scripts/export_bundle.py [--golden]` -> `generated/bundle/`
+  (scene.xml+meshes+textures, trajectory.csv = one lap of poses at 1 kHz, config/, golden/).
+- `cpp/` = standalone CMake lib `fs_sim_core` (+ `fsim_bench`, `fsim_test_golden`); public API in
+  `cpp/include/fs_mono_cam_sim/*.h` is a port of render/{renderer,bboxes,sim}.py.
+  `cpp/ros/sim_node.cpp` = roscpp node (render thread owns Simulation/GL; publish thread;
+  `ros.time_mode` realtime|lockstep). Root `CMakeLists.txt` is catkin and does add_subdirectory(cpp).
+- Windows build: `cmd //c build\\build_cpp.bat` (NMake via VS 18 vcvars64; first configure:
+  `cmake -G "NMake Makefiles" -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release -DMUJOCO_DIR=<repo>/.deps/mujoco-3.14.0`).
+  Verify: `build/cpp/fsim_test_golden.exe generated/bundle` (C++ boxes == Python, 0 px) and
+  `build/cpp/fsim_bench.exe generated/bundle 600` (RTX 4060: ~4.4 ms/frame, ~230 fps).
+- Exes export NvOptimusEnabled so they use the NVIDIA GPU on Optimus laptops. EGL path (Linux) untested.
+- The ROS node can't be built here; check it with g++ -fsyntax-only against `build/mock_ros/include`.
+- `visualization_msgs/ImageMarker::POLYGON` = 3 (not 4).
+
 ## Gotchas learned during the build
 - `statistic center` is the track centre (not 0 0 0) because the sun shadow map is centred there; extent stays 1.
 - Ground plane is 2 cm below the asphalt strip top (z=0); cones/car stand at z=0.

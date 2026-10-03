@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ROS Noetic node: publishes the simulated camera feed + fake-YOLO boxes.
 
 Publishes (see config/perception.yaml `ros:`):

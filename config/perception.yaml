@@ -25,6 +25,8 @@ bbox:
 render:
   msaa_samples: null          # RGB anti-aliasing samples (0/2/4/8); null = use the scene XML value.
                               # Lower (0) is much faster on weak GPUs; segmentation is never multisampled.
+  seg_scale: 1.0              # C++ node only: segmentation resolution factor (0.5 = half res,
+                              # ~4x cheaper; boxes are scaled back, error <= ~1 px)
 
 seed: 0                       # RNG seed for bbox noise/dropout (override with the ~seed ROS param)
 
@@ -46,3 +48,8 @@ ros:
 
   realtime_factor: 1.0        # 1.0 = real time, 0.5 = half speed
   publish_clock: false        # publish /clock (sim time) for use_sim_time setups
+
+  # C++ node only. realtime: frames paced on the wall clock, dropped (with a warning) if the
+  # machine can't keep up. lockstep: publishes /clock and never drops - sim time advances exactly
+  # 1/fps per frame, however long rendering takes (use with /use_sim_time:=true).
+  time_mode: realtime         # realtime | lockstep

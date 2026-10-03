@@ -7,3 +7,5 @@ generated/
 build/
 devel/
 .pytest_cache/
+.deps/
+*.ppm

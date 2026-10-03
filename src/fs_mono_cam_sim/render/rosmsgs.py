@@ -6,7 +6,7 @@ unit-tested with fake message classes on a machine without ROS.
 import numpy as np
 
 # ImageMarker constants (visualization_msgs/ImageMarker)
-IMAGE_MARKER_POLYGON = 4
+IMAGE_MARKER_POLYGON = 3   # visualization_msgs/ImageMarker: CIRCLE 0, LINE_STRIP 1, LINE_LIST 2, POLYGON 3, POINTS 4
 
 
 def box_corners(det):

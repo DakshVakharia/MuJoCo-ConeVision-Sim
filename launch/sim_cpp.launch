@@ -1,0 +1,30 @@
+<launch>
+  <!-- C++ runtime node (1280x720 @ 120 fps). Offline step first:
+           python3 scripts/export_bundle.py        # writes generated/bundle/
+       Topics, fps, quality, time_mode ... come from <bundle>/config/*.yaml (perception.yaml `ros:`). -->
+  <arg name="bundle_dir" default="$(find fs_mono_cam_sim)/generated/bundle"/>
+  <arg name="config_dir" default=""/>      <!-- empty = <bundle_dir>/config -->
+  <arg name="lockstep" default="false"/>   <!-- true: time_mode=lockstep (deterministic, publishes /clock,
+                                                never drops frames) AND use_sim_time=true.
+                                                false: time_mode from perception.yaml (default realtime) -->
+  <arg name="output" default="screen"/>
+
+  <!-- use_sim_time must be set before any node starts; only touched in lockstep -->
+  <param if="$(arg lockstep)" name="/use_sim_time" value="true"/>
+
+  <node pkg="fs_mono_cam_sim" type="fs_mono_cam_sim_node" name="fs_mono_cam_sim"
+        output="$(arg output)" required="true">
+    <param name="bundle_dir" value="$(arg bundle_dir)"/>
+    <param name="config_dir" value="$(arg config_dir)"/>
+    <param if="$(arg lockstep)" name="time_mode" value="lockstep"/>
+    <!-- <param name="lockstep_throttle" value="true"/>   lockstep but paced to realtime_factor -->
+
+    <!-- Feed the depth-perception pipeline (Monocular-Depth-perception-for-Cones).
+         image_transport publishes raw at <image_topic> and JPEG at <image_topic>/compressed
+         (sensor_msgs/CompressedImage), so remap the /compressed subtopic: -->
+    <!-- <remap from="/camera/image_raw/compressed" to="/zed2/zed_node/left/image_rect_color_compressed"/> -->
+    <!-- <remap from="/camera/bounding_boxes"        to="/stereo_cone_perception/bounding_boxes"/> -->
+    <!-- Raw only / JPEG only: <param name="/camera/image_raw/disable_pub_plugins" .../> is not needed;
+         unsubscribed transports cost nothing (JPEG is only encoded while someone subscribes). -->
+  </node>
+</launch>

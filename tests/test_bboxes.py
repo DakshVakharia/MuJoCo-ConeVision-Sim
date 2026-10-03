@@ -128,7 +128,7 @@ class FakeHeader:
 
 
 class FakeMarker:
-    POLYGON = 4
+    POLYGON = 3
     ADD = 0
 
     def __init__(self):
@@ -157,7 +157,7 @@ def test_marker_array_matches_cone_base_detector_expectations():
     arr = rosmsgs.build_marker_array(msgs, dets, colors, "T", "front_cam_optical")
     (m,) = arr.markers
     assert m.header.stamp == "T" and m.header.frame_id == "front_cam_optical"
-    assert m.type == 4 and m.ns == "blue" and m.id == 7 and m.scale == 2.0
+    assert m.type == 3 and m.ns == "blue" and m.id == 7 and m.scale == 2.0
     assert [(p.x, p.y, p.z) for p in m.points] == [(10, 20, 0), (30, 20, 0), (30, 60, 0), (10, 60, 0)]
     # detector logic: max y over points, mean x of the points at that y == bottom-centre
     ymax = max(p.y for p in m.points)

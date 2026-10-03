@@ -25,10 +25,18 @@ python -m pytest tests
 ```
 
 ## ROS
-Put the repo in a catkin workspace (`catkin_make`, package `fs_mono_cam_sim`), install the Python deps for
-ROS's python3, then:
+Two nodes publish the same topics:
+- **C++ node** (`fs_mono_cam_sim_node`, `launch/sim_cpp.launch`): the main one, built for 720p @ 120 fps.
+  It reads a bundle exported once by Python: `python3 scripts/export_bundle.py` → `generated/bundle/`.
+  Build/run instructions: [docs/ros_cpp_node.md](docs/ros_cpp_node.md).
+- **Python node** (`scripts/sim_node.py`, `launch/sim.launch`): fallback/reference, fine up to ~15-30 fps.
+  Noetic uses Python 3.8, so install `mujoco==3.2.3` (last release with Python 3.8 wheels),
+  `numpy<1.25`, `scipy<1.11` for ROS's python3. (Not yet tested against MuJoCo 3.2.3; development
+  uses 3.14.)
+
+Put the repo in a catkin workspace (package `fs_mono_cam_sim`), then:
 ```bash
-roslaunch fs_mono_cam_sim sim.launch seed:=3            # MUJOCO_GL=egl by default (headless)
+roslaunch fs_mono_cam_sim sim.launch seed:=3            # Python node; MUJOCO_GL=egl by default (headless)
 ```
 | Topic (default) | Type | Notes |
 |---|---|---|
