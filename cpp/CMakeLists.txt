@@ -4,9 +4,9 @@
 #   cmake -S cpp -B build/cpp -DMUJOCO_DIR=/path/to/mujoco-3.x
 #   cmake --build build/cpp --config Release
 #
-# Targets: fs_sim_core (static lib, alias fs_mono_cam_sim::core), fsim_bench, fsim_test_golden.
+# Targets: conevision_core (static lib, alias conevision_sim::core), cvsim_bench, cvsim_test_golden.
 cmake_minimum_required(VERSION 3.16)
-project(fs_mono_cam_sim_cpp LANGUAGES CXX)
+project(conevision_sim_cpp LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,7 +21,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 else()
   set(_fssim_top OFF)
 endif()
-option(FSSIM_BUILD_TOOLS "Build fsim_bench and fsim_test_golden" ${_fssim_top})
+option(CVSIM_BUILD_TOOLS "Build cvsim_bench and cvsim_test_golden" ${_fssim_top})
 
 # ---------------------------------------------------------------- MuJoCo
 # Expects <MUJOCO_DIR>/include/mujoco/mujoco.h and lib/mujoco.lib (Windows) or lib/libmujoco.so*.
@@ -55,9 +55,9 @@ endif()
 # ---------------------------------------------------------------- yaml-cpp
 find_package(yaml-cpp QUIET)
 if(TARGET yaml-cpp::yaml-cpp)
-  set(FSSIM_YAML_TARGET yaml-cpp::yaml-cpp)
+  set(CVSIM_YAML_TARGET yaml-cpp::yaml-cpp)
 elseif(TARGET yaml-cpp)
-  set(FSSIM_YAML_TARGET yaml-cpp)
+  set(CVSIM_YAML_TARGET yaml-cpp)
 else()
   message(STATUS "yaml-cpp not installed: fetching it from github.com")
   include(FetchContent)
@@ -69,7 +69,7 @@ else()
   FetchContent_Declare(yaml-cpp GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
                        GIT_TAG 0.8.0 GIT_SHALLOW TRUE)
   FetchContent_MakeAvailable(yaml-cpp)
-  set(FSSIM_YAML_TARGET yaml-cpp)
+  set(CVSIM_YAML_TARGET yaml-cpp)
 endif()
 
 # ---------------------------------------------------------------- OpenGL context provider
@@ -89,32 +89,32 @@ if(WIN32)
     FetchContent_MakeAvailable(glfw)
     set(BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS_SAVED})
   endif()
-  set(FSSIM_GL_SRC src/gl_context_glfw.cpp)
-  set(FSSIM_GL_LIBS glfw opengl32)
+  set(CVSIM_GL_SRC src/gl_context_glfw.cpp)
+  set(CVSIM_GL_LIBS glfw opengl32)
 else()
   # Headless: EGL + desktop OpenGL (works with the NVIDIA driver, no X server needed).
   find_package(OpenGL REQUIRED COMPONENTS OpenGL EGL)
-  set(FSSIM_GL_SRC src/gl_context_egl.cpp)
-  set(FSSIM_GL_LIBS OpenGL::EGL OpenGL::OpenGL ${CMAKE_DL_LIBS})
+  set(CVSIM_GL_SRC src/gl_context_egl.cpp)
+  set(CVSIM_GL_LIBS OpenGL::EGL OpenGL::OpenGL ${CMAKE_DL_LIBS})
 endif()
 
 # ---------------------------------------------------------------- core library
-add_library(fs_sim_core STATIC
+add_library(conevision_core STATIC
   src/config.cpp
   src/trajectory.cpp
   src/renderer.cpp
   src/bboxes.cpp
   src/simulation.cpp
-  ${FSSIM_GL_SRC})
-add_library(fs_mono_cam_sim::core ALIAS fs_sim_core)
-target_include_directories(fs_sim_core PUBLIC
+  ${CVSIM_GL_SRC})
+add_library(conevision_sim::core ALIAS conevision_core)
+target_include_directories(conevision_core PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-target_link_libraries(fs_sim_core PUBLIC mujoco::mujoco PRIVATE ${FSSIM_YAML_TARGET} ${FSSIM_GL_LIBS})
+target_link_libraries(conevision_core PUBLIC mujoco::mujoco PRIVATE ${CVSIM_YAML_TARGET} ${CVSIM_GL_LIBS})
 if(MSVC)
-  target_compile_options(fs_sim_core PRIVATE /W3 /utf-8)
-  target_compile_definitions(fs_sim_core PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
+  target_compile_options(conevision_core PRIVATE /W3 /utf-8)
+  target_compile_definitions(conevision_core PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
 else()
-  target_compile_options(fs_sim_core PRIVATE -Wall -Wextra)
+  target_compile_options(conevision_core PRIVATE -Wall -Wextra)
 endif()
 
 # Copy mujoco.dll next to an executable (Windows only).
@@ -126,10 +126,10 @@ function(fssim_copy_mujoco_dll tgt)
 endfunction()
 
 # ---------------------------------------------------------------- tools + tests
-if(FSSIM_BUILD_TOOLS)
-  add_executable(fsim_bench tools/bench.cpp)
-  target_link_libraries(fsim_bench PRIVATE fs_sim_core)
-  fssim_copy_mujoco_dll(fsim_bench)
+if(CVSIM_BUILD_TOOLS)
+  add_executable(cvsim_bench tools/bench.cpp)
+  target_link_libraries(cvsim_bench PRIVATE conevision_core)
+  fssim_copy_mujoco_dll(cvsim_bench)
 
   find_package(nlohmann_json 3.2 QUIET)
   if(NOT TARGET nlohmann_json::nlohmann_json)
@@ -140,13 +140,13 @@ if(FSSIM_BUILD_TOOLS)
                          GIT_TAG v3.11.3 GIT_SHALLOW TRUE)
     FetchContent_MakeAvailable(nlohmann_json)
   endif()
-  add_executable(fsim_test_golden test/test_golden.cpp)
-  target_link_libraries(fsim_test_golden PRIVATE fs_sim_core nlohmann_json::nlohmann_json)
-  fssim_copy_mujoco_dll(fsim_test_golden)
+  add_executable(cvsim_test_golden test/test_golden.cpp)
+  target_link_libraries(cvsim_test_golden PRIVATE conevision_core nlohmann_json::nlohmann_json)
+  fssim_copy_mujoco_dll(cvsim_test_golden)
   if(MSVC)
-    target_compile_options(fsim_bench PRIVATE /W3)
-    target_compile_options(fsim_test_golden PRIVATE /W3)
-    target_compile_definitions(fsim_bench PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
-    target_compile_definitions(fsim_test_golden PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
+    target_compile_options(cvsim_bench PRIVATE /W3)
+    target_compile_options(cvsim_test_golden PRIVATE /W3)
+    target_compile_definitions(cvsim_bench PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
+    target_compile_definitions(cvsim_test_golden PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX)
   endif()
 endif()

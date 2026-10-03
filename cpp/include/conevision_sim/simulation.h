@@ -1,5 +1,5 @@
 // Bundle loader + per-frame pipeline: pose -> mj_forward -> render -> boxes.
-// Port of src/fs_mono_cam_sim/render/sim.py for the C++ runtime.
+// Port of src/conevision_sim/render/sim.py for the C++ runtime.
 #pragma once
 
 #include <memory>
@@ -8,12 +8,12 @@
 
 #include <mujoco/mujoco.h>
 
-#include "fs_mono_cam_sim/bboxes.h"
-#include "fs_mono_cam_sim/config.h"
-#include "fs_mono_cam_sim/renderer.h"
-#include "fs_mono_cam_sim/trajectory.h"
+#include "conevision_sim/bboxes.h"
+#include "conevision_sim/config.h"
+#include "conevision_sim/renderer.h"
+#include "conevision_sim/trajectory.h"
 
-namespace fsim {
+namespace cvsim {
 
 struct Frame {
   long long k = 0;                 // frame index; t = k / fps exactly
@@ -52,4 +52,4 @@ class Simulation {
   SegImage seg_;
 };
 
-}  // namespace fsim
+}  // namespace cvsim

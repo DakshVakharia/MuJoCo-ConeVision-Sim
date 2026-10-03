@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>fs_mono_cam_sim</name>
+  <name>conevision_sim</name>
   <version>0.1.0</version>
-  <description>MuJoCo simulator of a Formula Student car with a single long-range monocular camera: random cone tracks, RGB feed and ground-truth "YOLO-style" bounding boxes over ROS.</description>
+  <description>MuJoCo camera-perception simulator for a vehicle with a single long-range monocular camera (Formula Student Driverless cone conventions): random cone tracks, RGB feed and ground-truth "YOLO-style" bounding boxes over ROS.</description>
   <maintainer email="daksh.vakharia@gmail.com">Daksh Vakharia</maintainer>
   <license>MIT</license>
 

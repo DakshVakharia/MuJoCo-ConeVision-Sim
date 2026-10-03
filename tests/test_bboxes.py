@@ -1,9 +1,9 @@
 import numpy as np
 import pytest
 
-from fs_mono_cam_sim.render import bboxes as bb
-from fs_mono_cam_sim.render import rosmsgs
-from fs_mono_cam_sim.render.bboxes import Detection, compute_bboxes, pixel_stats
+from conevision_sim.render import bboxes as bb
+from conevision_sim.render import rosmsgs
+from conevision_sim.render.bboxes import Detection, compute_bboxes, pixel_stats
 
 
 # ---------------------------------------------------------------- synthetic model/data
@@ -195,9 +195,9 @@ def _project(sim, cam, world_pt):
 
 
 def test_integration_boxes_match_projected_cone_base():
-    from fs_mono_cam_sim.config import load_all
-    from fs_mono_cam_sim.render.sim import Simulation
-    from fs_mono_cam_sim.track.track_types import Track
+    from conevision_sim.config import load_all
+    from conevision_sim.render.sim import Simulation
+    from conevision_sim.track.track_types import Track
 
     cfg = load_all()
     cfg["camera"] = {**cfg["camera"], "width": 640, "height": 360, "fx": 550.0, "fy": 550.0,

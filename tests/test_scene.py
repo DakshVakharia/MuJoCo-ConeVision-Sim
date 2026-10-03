@@ -9,10 +9,10 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from fs_mono_cam_sim import config                                   # noqa: E402
-from fs_mono_cam_sim.scene import scenery as scn                      # noqa: E402
-from fs_mono_cam_sim.scene.builder import build_scene_xml, write_scene  # noqa: E402
-from fs_mono_cam_sim.track.track_types import Track                   # noqa: E402
+from conevision_sim import config                                   # noqa: E402
+from conevision_sim.scene import scenery as scn                      # noqa: E402
+from conevision_sim.scene.builder import build_scene_xml, write_scene  # noqa: E402
+from conevision_sim.track.track_types import Track                   # noqa: E402
 
 
 @pytest.fixture(scope="module")

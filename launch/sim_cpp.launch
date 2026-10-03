@@ -2,7 +2,7 @@
   <!-- C++ runtime node (1280x720 @ 120 fps). Offline step first:
            python3 scripts/export_bundle.py        # writes generated/bundle/
        Topics, fps, quality, time_mode ... come from <bundle>/config/*.yaml (perception.yaml `ros:`). -->
-  <arg name="bundle_dir" default="$(find fs_mono_cam_sim)/generated/bundle"/>
+  <arg name="bundle_dir" default="$(find conevision_sim)/generated/bundle"/>
   <arg name="config_dir" default=""/>      <!-- empty = <bundle_dir>/config -->
   <arg name="lockstep" default="false"/>   <!-- true: time_mode=lockstep (deterministic, publishes /clock,
                                                 never drops frames) AND use_sim_time=true.
@@ -12,7 +12,7 @@
   <!-- use_sim_time must be set before any node starts; only touched in lockstep -->
   <param if="$(arg lockstep)" name="/use_sim_time" value="true"/>
 
-  <node pkg="fs_mono_cam_sim" type="fs_mono_cam_sim_node" name="fs_mono_cam_sim"
+  <node pkg="conevision_sim" type="conevision_sim_node" name="conevision_sim"
         output="$(arg output)" required="true">
     <param name="bundle_dir" value="$(arg bundle_dir)"/>
     <param name="config_dir" value="$(arg config_dir)"/>

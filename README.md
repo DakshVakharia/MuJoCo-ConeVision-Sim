@@ -1,12 +1,17 @@
-# FS Monocular Camera Sim
+# MuJoCo ConeVision Sim
 
-MuJoCo simulator of a Formula Student car whose **only sensor is one fast, long-range monocular camera**
-(no stereo, no LiDAR). It generates a random cone track, builds a MuJoCo scene with FS cones, trees and
-roadside objects, drives an F1-style car around it and publishes over ROS Noetic:
+Camera-perception simulator for a vehicle whose **only sensor is one fast, long-range monocular camera**
+(no stereo, no LiDAR), with exact ground truth for every frame. It generates a random cone track, builds a
+MuJoCo scene with cones, trees and roadside objects, drives an open-wheel car around it and publishes over
+ROS Noetic:
 
 1. the camera feed: `sensor_msgs/Image` (rgb8) and/or JPEG `sensor_msgs/CompressedImage`, at a configurable fps/resolution/quality
 2. "YOLO-style" bounding boxes as `foxglove_msgs/ImageMarkerArray`, computed exactly from MuJoCo's
    segmentation render (no neural network; occlusion-aware), with an optional detector-noise model.
+
+Tracks, cones and the default car follow Formula Student Driverless conventions (cone sizes and colours,
+blue left / yellow right, track width and spacing), so the output can be used to test FSD perception
+stacks. It is an independent project, not affiliated with Formula Student or IMechE.
 
 The output is drop-in compatible with
 [Monocular-Depth-perception-for-Cones](https://github.com/DakshVakharia/Monocular-Depth-perception-for-Cones).
@@ -26,7 +31,7 @@ python -m pytest tests
 
 ## ROS
 Two nodes publish the same topics:
-- **C++ node** (`fs_mono_cam_sim_node`, `launch/sim_cpp.launch`): the main one, built for 720p @ 120 fps.
+- **C++ node** (`conevision_sim_node`, `launch/sim_cpp.launch`): the main one, built for 720p @ 120 fps.
   It reads a bundle exported once by Python: `python3 scripts/export_bundle.py` → `generated/bundle/`.
   Build/run instructions: [docs/ros_cpp_node.md](docs/ros_cpp_node.md).
 - **Python node** (`scripts/sim_node.py`, `launch/sim.launch`): fallback/reference, fine up to ~15-30 fps.
@@ -34,9 +39,9 @@ Two nodes publish the same topics:
   `numpy<1.25`, `scipy<1.11` for ROS's python3. (Not yet tested against MuJoCo 3.2.3; development
   uses 3.14.)
 
-Put the repo in a catkin workspace (package `fs_mono_cam_sim`), then:
+Put the repo in a catkin workspace (package `conevision_sim`), then:
 ```bash
-roslaunch fs_mono_cam_sim sim.launch seed:=3            # Python node; MUJOCO_GL=egl by default (headless)
+roslaunch conevision_sim sim.launch seed:=3            # Python node; MUJOCO_GL=egl by default (headless)
 ```
 | Topic (default) | Type | Notes |
 |---|---|---|

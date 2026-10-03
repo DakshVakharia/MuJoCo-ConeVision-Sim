@@ -1,12 +1,12 @@
 // YAML config loading. Key names match config/camera.yaml, perception.yaml and car.yaml.
-#include "fs_mono_cam_sim/config.h"
+#include "conevision_sim/config.h"
 
 #include <stdexcept>
 #include <vector>
 
 #include <yaml-cpp/yaml.h>
 
-namespace fsim {
+namespace cvsim {
 namespace {
 
 YAML::Node load_file(const std::string& path) {
@@ -84,4 +84,4 @@ SimConfig load_config(const std::string& config_dir) {
   return c;
 }
 
-}  // namespace fsim
+}  // namespace cvsim

@@ -5,10 +5,10 @@
 
 #include <GLFW/glfw3.h>
 
-#include "fs_mono_cam_sim/renderer.h"
+#include "conevision_sim/renderer.h"
 #include "gl_internal.h"
 
-namespace fsim {
+namespace cvsim {
 namespace {
 
 class GlfwContext : public GlContext {
@@ -16,7 +16,7 @@ class GlfwContext : public GlContext {
   GlfwContext() {
     if (!glfwInit()) throw std::runtime_error("glfwInit failed");
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-    window_ = glfwCreateWindow(16, 16, "fs_mono_cam_sim", nullptr, nullptr);
+    window_ = glfwCreateWindow(16, 16, "conevision_sim", nullptr, nullptr);
     if (!window_) {
       glfwTerminate();
       throw std::runtime_error("glfwCreateWindow failed (no desktop OpenGL?)");
@@ -45,4 +45,4 @@ std::string gl_renderer_string() {
   return s ? s : "unknown";
 }
 
-}  // namespace fsim
+}  // namespace cvsim

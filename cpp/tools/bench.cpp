@@ -1,4 +1,4 @@
-// fsim_bench <bundle_dir> [frames=600] [seg_scale]
+// cvsim_bench <bundle_dir> [frames=600] [seg_scale]
 // Runs the full per-frame pipeline and prints per-stage timings. Frame 60 is saved as bench_frame60.ppm.
 #include <algorithm>
 #include <chrono>
@@ -11,7 +11,7 @@
 
 #include "../src/gl_internal.h"
 #include "config_override.h"
-#include "fs_mono_cam_sim/simulation.h"
+#include "conevision_sim/simulation.h"
 
 #ifdef _WIN32
 // Ask Optimus/PowerXpress laptops to run this exe on the discrete GPU (read by the driver at load).
@@ -36,7 +36,7 @@ struct Stat {
   void print(const char* name) const { std::printf("  %-8s mean %7.3f ms   p95 %7.3f ms\n", name, mean(), p95()); }
 };
 
-void write_ppm(const char* path, const fsim::RgbImage& im) {
+void write_ppm(const char* path, const cvsim::RgbImage& im) {
   if (FILE* f = std::fopen(path, "wb")) {
     std::fprintf(f, "P6\n%d %d\n255\n", im.width, im.height);
     std::fwrite(im.data.data(), 1, im.data.size(), f);
@@ -53,15 +53,15 @@ int main(int argc, char** argv) {
   }
   const int frames = argc > 2 ? std::atoi(argv[2]) : 600;
   try {
-    fsim_tools::ConfigOverride ov;
+    cvsim_tools::ConfigOverride ov;
     if (argc > 3) ov.seg_scale = std::atof(argv[3]);
-    const std::string cfg_dir = argc > 3 ? fsim_tools::make_config(argv[1], ov, "bench") : "";
-    fsim::Simulation sim(argv[1], cfg_dir);
-    std::printf("GL_RENDERER: %s\n", fsim::gl_renderer_string().c_str());
+    const std::string cfg_dir = argc > 3 ? cvsim_tools::make_config(argv[1], ov, "bench") : "";
+    cvsim::Simulation sim(argv[1], cfg_dir);
+    std::printf("GL_RENDERER: %s\n", cvsim::gl_renderer_string().c_str());
     std::printf("camera %dx%d, seg_scale %.2f, %d frames\n", sim.config().camera.width,
                 sim.config().camera.height, sim.config().render.seg_scale, frames);
 
-    fsim::Frame f;
+    cvsim::Frame f;
     for (int k = 0; k < 30; ++k) sim.frame(k, f);   // warm-up (shader compile, driver caches)
 
     Stat step, render, bbox, total;

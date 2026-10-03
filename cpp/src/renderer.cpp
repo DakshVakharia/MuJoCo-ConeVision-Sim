@@ -1,11 +1,11 @@
-// Port of src/fs_mono_cam_sim/render/renderer.py.
+// Port of src/conevision_sim/render/renderer.py.
 //
 // One GL context, two mjrContexts:
 //   * ctx_rgb: the normal colour render (MSAA if the scene XML / render.msaa_samples asks for it)
 //   * ctx_seg: segmentation render WITHOUT MSAA (ids must never be blended, and it is faster)
 // The seg pass uses MuJoCo's mjRND_SEGMENT + mjRND_IDCOLOR flags: every geom is drawn flat in a colour
 // that encodes (segid + 1) as a little-endian 24-bit number; 0 means "nothing drawn" (background).
-#include "fs_mono_cam_sim/renderer.h"
+#include "conevision_sim/renderer.h"
 
 #include <algorithm>
 #include <cmath>
@@ -14,7 +14,7 @@
 
 #include "gl_internal.h"
 
-namespace fsim {
+namespace cvsim {
 
 namespace {
 constexpr int kMaxGeom = 10000;      // same as mujoco.Renderer's default scene capacity
@@ -150,4 +150,4 @@ void CameraRenderer::render(const mjData* d, RgbImage& rgb, SegImage& seg) {
   }
 }
 
-}  // namespace fsim
+}  // namespace cvsim

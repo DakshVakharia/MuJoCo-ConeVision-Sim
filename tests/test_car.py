@@ -5,11 +5,11 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import pytest
 
-from fs_mono_cam_sim.car.camera_geometry import car_mocap_pose
-from fs_mono_cam_sim.car.car_model import CAR_BODY, add_car
-from fs_mono_cam_sim.car.driver import CenterlineDriver
-from fs_mono_cam_sim.config import load_all
-from fs_mono_cam_sim.track.track_types import Track
+from conevision_sim.car.camera_geometry import car_mocap_pose
+from conevision_sim.car.car_model import CAR_BODY, add_car
+from conevision_sim.car.driver import CenterlineDriver
+from conevision_sim.config import load_all
+from conevision_sim.track.track_types import Track
 
 CFG = load_all()
 

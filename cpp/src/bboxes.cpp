@@ -1,16 +1,16 @@
-// Port of src/fs_mono_cam_sim/render/bboxes.py: boxes = extent of the visible pixels of each cone body.
+// Port of src/conevision_sim/render/bboxes.py: boxes = extent of the visible pixels of each cone body.
 //
 // Performance: one pass over the segmentation image does geom -> cone body lookup and updates
 // per-body count / min / max (no sorting, no per-pixel allocation). Everything after that is
 // O(number of cones).
-#include "fs_mono_cam_sim/bboxes.h"
+#include "conevision_sim/bboxes.h"
 
 #include <algorithm>
 #include <climits>
 #include <cmath>
 #include <cstdlib>
 
-namespace fsim {
+namespace cvsim {
 namespace {
 
 constexpr const char* kClasses[] = {"blue", "yellow", "orange", "orange_big"};
@@ -137,4 +137,4 @@ std::vector<Detection> BoxComputer::compute(const mjData* d, int cam_id, const S
   return out;
 }
 
-}  // namespace fsim
+}  // namespace cvsim

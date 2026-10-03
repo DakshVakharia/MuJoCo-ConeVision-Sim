@@ -1,6 +1,6 @@
 // Linux headless GL context via EGL. Picks an NVIDIA device if several are available
 // (EGL_EXT_device_enumeration), so the sim renders on the dGPU without an X server.
-// Override the choice with env FSIM_EGL_DEVICE=<index>.
+// Override the choice with env CVSIM_EGL_DEVICE=<index>.
 // NOTE: written for Ubuntu 20.04 + NVIDIA driver; not compiled/tested on the Windows dev machine.
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -12,10 +12,10 @@
 #include <string>
 #include <vector>
 
-#include "fs_mono_cam_sim/renderer.h"
+#include "conevision_sim/renderer.h"
 #include "gl_internal.h"
 
-namespace fsim {
+namespace cvsim {
 namespace {
 
 class EglContext : public GlContext {
@@ -72,7 +72,7 @@ class EglContext : public GlContext {
       std::vector<EGLDeviceEXT> devs(count > 0 ? count : 0);
       if (count > 0) query_devices(count, devs.data(), &count);
 
-      const char* forced = std::getenv("FSIM_EGL_DEVICE");
+      const char* forced = std::getenv("CVSIM_EGL_DEVICE");
       EGLDisplay fallback = EGL_NO_DISPLAY;
       for (EGLint i = 0; i < count; ++i) {
         if (forced && std::atoi(forced) != i) continue;
@@ -104,4 +104,4 @@ std::string gl_renderer_string() {
   return s ? s : "unknown";
 }
 
-}  // namespace fsim
+}  // namespace cvsim

@@ -15,7 +15,7 @@ Direct downloads used (Oct 2026):
 - https://kenney.nl/media/pages/assets/racing-kit/933b8fd9fd-1677580949/kenney_racing-kit.zip
 - https://kenney.nl/media/pages/assets/survival-kit/4065a8185b-1712149243/kenney_survival-kit.zip
 
-Conversion: `src/fs_mono_cam_sim/scene/asset_import.py` splits each model by colour into
+Conversion: `src/conevision_sim/scene/asset_import.py` splits each model by colour into
 `meshes/<name>_<k>.obj` (Z-up, centred, base at z=0, scaled to metres) and writes `catalog.json`
 (per-part rgba, size, footprint radius). Colours of the nature kit were remapped to natural greens/browns.
 Tyre stacks and hay bales are generated procedurally (no download).

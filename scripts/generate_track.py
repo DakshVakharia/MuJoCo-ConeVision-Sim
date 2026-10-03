@@ -14,8 +14,8 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fs_mono_cam_sim.config import load_yaml  # noqa: E402
-from fs_mono_cam_sim.track.generator import generate_track  # noqa: E402
+from conevision_sim.config import load_yaml  # noqa: E402
+from conevision_sim.track.generator import generate_track  # noqa: E402
 
 COLORS_BGR = {"blue": (230, 120, 20), "yellow": (0, 215, 255),
               "orange": (0, 140, 255), "orange_big": (0, 90, 255)}

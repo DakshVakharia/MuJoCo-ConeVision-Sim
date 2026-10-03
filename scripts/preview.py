@@ -16,9 +16,9 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from fs_mono_cam_sim.config import CONFIG_DIR, GENERATED_DIR, load_all  # noqa: E402
-from fs_mono_cam_sim.render.sim import Simulation  # noqa: E402
-from fs_mono_cam_sim.track.track_types import CONE_CLASSES  # noqa: E402
+from conevision_sim.config import CONFIG_DIR, GENERATED_DIR, load_all  # noqa: E402
+from conevision_sim.render.sim import Simulation  # noqa: E402
+from conevision_sim.track.track_types import CONE_CLASSES  # noqa: E402
 
 
 def draw_boxes(rgb, detections, outline_colors):

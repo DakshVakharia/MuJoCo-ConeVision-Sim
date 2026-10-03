@@ -2,9 +2,9 @@ import numpy as np
 import pytest
 from scipy.spatial import cKDTree
 
-from fs_mono_cam_sim.config import load_config
-from fs_mono_cam_sim.track.generator import generate_track
-from fs_mono_cam_sim.track.track_types import Track
+from conevision_sim.config import load_config
+from conevision_sim.track.generator import generate_track
+from conevision_sim.track.track_types import Track
 
 BACKENDS = ["third_party", "builtin"]
 SEEDS = list(range(20))

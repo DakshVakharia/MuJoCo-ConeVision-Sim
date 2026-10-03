@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "fs_mono_cam_sim/config.h"
+#include "conevision_sim/config.h"
 
-namespace fsim {
+namespace cvsim {
 
 struct CarState {
   double x = 0, y = 0, yaw = 0;   // world frame; yaw wrapped to [-pi, pi)
@@ -35,4 +35,4 @@ class Trajectory {
   BodyMotion motion_;
 };
 
-}  // namespace fsim
+}  // namespace cvsim

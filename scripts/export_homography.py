@@ -11,8 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fs_mono_cam_sim.car.camera_geometry import ground_homography, intrinsics  # noqa: E402
-from fs_mono_cam_sim.config import load_config  # noqa: E402
+from conevision_sim.car.camera_geometry import ground_homography, intrinsics  # noqa: E402
+from conevision_sim.config import load_config  # noqa: E402
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
     H = ground_homography(cam)
     fx, fy, cx, cy, w, h = intrinsics(cam)
     lines = [
-        "# Ground-plane homography exported by FS-Monocular-Camera-Sim (scripts/export_homography.py)",
+        "# Ground-plane homography exported by MuJoCo-ConeVision-Sim (scripts/export_homography.py)",
         "# Maps image pixel (u, v, 1) -> ground (x forward, y left, 1) in metres, base_link frame",
         "# (origin on the ground under the car centre), flat ground, car level.",
         f"# Camera: {w}x{h} px, fx={fx:.4f} fy={fy:.4f} cx={cx:.4f} cy={cy:.4f}",

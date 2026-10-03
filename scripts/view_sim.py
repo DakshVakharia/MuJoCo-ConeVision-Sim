@@ -11,11 +11,11 @@ import time
 import mujoco
 import mujoco.viewer
 
-from fs_mono_cam_sim.car.camera_geometry import car_mocap_pose
-from fs_mono_cam_sim.car.driver import CenterlineDriver
-from fs_mono_cam_sim.config import CONFIG_DIR, load_all
-from fs_mono_cam_sim.scene.builder import build_scene_xml
-from fs_mono_cam_sim.track.generator import generate_track
+from conevision_sim.car.camera_geometry import car_mocap_pose
+from conevision_sim.car.driver import CenterlineDriver
+from conevision_sim.config import CONFIG_DIR, load_all
+from conevision_sim.scene.builder import build_scene_xml
+from conevision_sim.track.generator import generate_track
 
 
 def main():

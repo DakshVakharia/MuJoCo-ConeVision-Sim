@@ -32,11 +32,11 @@ def main():
     from std_msgs.msg import ColorRGBA
     from visualization_msgs.msg import ImageMarker
 
-    from fs_mono_cam_sim.config import CONFIG_DIR, load_all
-    from fs_mono_cam_sim.render import rosmsgs
-    from fs_mono_cam_sim.render.sim import Simulation
+    from conevision_sim.config import CONFIG_DIR, load_all
+    from conevision_sim.render import rosmsgs
+    from conevision_sim.render.sim import Simulation
 
-    rospy.init_node("fs_mono_cam_sim")
+    rospy.init_node("conevision_sim")
     config_dir = rospy.get_param("~config_dir", str(CONFIG_DIR)) or str(CONFIG_DIR)
     seed = rospy.get_param("~seed", None)
     if seed in ("", None):
@@ -70,7 +70,7 @@ def main():
     t_start = rospy.Time.now()          # with use_sim_time this is the /clock time (0 until we publish)
     pending = collections.deque()       # (wall due time, ImageMarkerArray) for latency_ms
     box_life = rospy.Duration.from_sec(max(2.0 / fps, 0.05))
-    rospy.loginfo("fs_mono_cam_sim: %dx%d @ %.0f fps (x%.2f), seed=%s", sim.renderer.width,
+    rospy.loginfo("conevision_sim: %dx%d @ %.0f fps (x%.2f), seed=%s", sim.renderer.width,
                   sim.renderer.height, fps, rtf, seed)
 
     def stamp_of(t):

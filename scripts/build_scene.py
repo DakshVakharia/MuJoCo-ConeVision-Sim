@@ -11,9 +11,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fs_mono_cam_sim import config                      # noqa: E402
-from fs_mono_cam_sim.scene.builder import write_scene   # noqa: E402
-from fs_mono_cam_sim.track.track_types import Track     # noqa: E402
+from conevision_sim import config                      # noqa: E402
+from conevision_sim.scene.builder import write_scene   # noqa: E402
+from conevision_sim.track.track_types import Track     # noqa: E402
 
 
 def main():

@@ -1,4 +1,4 @@
-// fs_mono_cam_sim_node: C++ (roscpp) runtime for the MuJoCo Formula Student camera simulator.
+// conevision_sim_node: C++ (roscpp) runtime for the MuJoCo Formula Student camera simulator.
 //
 // Port of scripts/sim_node.py. Offline tooling stays in Python (scripts/export_bundle.py writes the
 // bundle); this node loads the bundle and renders 1280x720 @ 120 fps.
@@ -39,9 +39,9 @@
 #include <sensor_msgs/Imu.h>
 #include <visualization_msgs/ImageMarker.h>
 
-#include "fs_mono_cam_sim/config.h"
-#include "fs_mono_cam_sim/simulation.h"
-#include "fs_mono_cam_sim/trajectory.h"
+#include "conevision_sim/config.h"
+#include "conevision_sim/simulation.h"
+#include "conevision_sim/trajectory.h"
 
 namespace {
 
@@ -55,7 +55,7 @@ class FramePool {
     for (auto& f : frames_) free_.push_back(&f);
   }
   // Renderer side: blocks for a free frame; nullptr when stopped.
-  fsim::Frame* acquire() {
+  cvsim::Frame* acquire() {
     std::unique_lock<std::mutex> lk(m_);
     cv_free_.wait(lk, [&] { return stop_ || !free_.empty(); });
     if (stop_) return nullptr;
@@ -63,7 +63,7 @@ class FramePool {
     free_.pop_front();
     return f;
   }
-  void push_ready(fsim::Frame* f) {
+  void push_ready(cvsim::Frame* f) {
     {
       std::lock_guard<std::mutex> lk(m_);
       ready_.push_back(f);
@@ -71,7 +71,7 @@ class FramePool {
     cv_ready_.notify_one();
   }
   // Publisher side: waits up to `timeout`; nullptr on timeout or stop.
-  fsim::Frame* pop_ready(std::chrono::milliseconds timeout) {
+  cvsim::Frame* pop_ready(std::chrono::milliseconds timeout) {
     std::unique_lock<std::mutex> lk(m_);
     cv_ready_.wait_for(lk, timeout, [&] { return stop_ || !ready_.empty(); });
     if (ready_.empty()) return nullptr;
@@ -79,7 +79,7 @@ class FramePool {
     ready_.pop_front();
     return f;
   }
-  void release(fsim::Frame* f) {
+  void release(cvsim::Frame* f) {
     {
       std::lock_guard<std::mutex> lk(m_);
       free_.push_back(f);
@@ -96,8 +96,8 @@ class FramePool {
   }
 
  private:
-  std::vector<fsim::Frame> frames_;
-  std::deque<fsim::Frame*> free_, ready_;
+  std::vector<cvsim::Frame> frames_;
+  std::deque<cvsim::Frame*> free_, ready_;
   std::mutex m_;
   std::condition_variable cv_free_, cv_ready_;
   bool stop_ = false;
@@ -117,7 +117,7 @@ struct Shared {
 
 // ---------------------------------------------------------------- message builders
 // Same layout as rosmsgs.build_marker_array.
-visualization_msgs::ImageMarker make_marker(const fsim::Detection& det, const fsim::BBoxConfig& bc,
+visualization_msgs::ImageMarker make_marker(const cvsim::Detection& det, const cvsim::BBoxConfig& bc,
                                             const ros::Time& stamp, const std::string& frame_id,
                                             const ros::Duration& lifetime) {
   visualization_msgs::ImageMarker m;
@@ -151,9 +151,9 @@ visualization_msgs::ImageMarker make_marker(const fsim::Detection& det, const fs
 // ---------------------------------------------------------------- render thread
 void render_thread_main(const std::string& bundle_dir, const std::string& config_dir, long long seed,
                         bool lockstep, bool throttle, FramePool* pool, Shared* sh) {
-  std::unique_ptr<fsim::Simulation> sim;
+  std::unique_ptr<cvsim::Simulation> sim;
   try {
-    sim.reset(new fsim::Simulation(bundle_dir, config_dir, seed));  // GL context created on THIS thread
+    sim.reset(new cvsim::Simulation(bundle_dir, config_dir, seed));  // GL context created on THIS thread
   } catch (const std::exception& e) {
     std::lock_guard<std::mutex> lk(sh->m);
     sh->error = std::string("Simulation init failed: ") + e.what();
@@ -205,7 +205,7 @@ void render_thread_main(const std::string& bundle_dir, const std::string& config
         }
         if (due > now) std::this_thread::sleep_until(due);
       }
-      fsim::Frame* f = pool->acquire();
+      cvsim::Frame* f = pool->acquire();
       if (!f) break;
       sim->frame(k, *f);
       pool->push_ready(f);
@@ -227,7 +227,7 @@ void render_thread_main(const std::string& bundle_dir, const std::string& config
 
 // ---------------------------------------------------------------- main
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "fs_mono_cam_sim");
+  ros::init(argc, argv, "conevision_sim");
   ros::NodeHandle nh, pnh("~");
 
   std::string bundle_dir, config_dir, time_mode_override;
@@ -237,9 +237,9 @@ int main(int argc, char** argv) {
   bool lockstep_throttle = false;
   pnh.param<bool>("lockstep_throttle", lockstep_throttle, false);
   if (bundle_dir.empty()) {
-    const std::string pkg = ros::package::getPath("fs_mono_cam_sim");
+    const std::string pkg = ros::package::getPath("conevision_sim");
     if (pkg.empty()) {
-      ROS_FATAL("~bundle_dir not set and package fs_mono_cam_sim not found");
+      ROS_FATAL("~bundle_dir not set and package conevision_sim not found");
       return 1;
     }
     bundle_dir = pkg + "/generated/bundle";
@@ -263,9 +263,9 @@ int main(int argc, char** argv) {
   }
 
   // The Simulation re-reads the config itself; we load it here for topics/modes (pure file parsing).
-  fsim::SimConfig cfg;
+  cvsim::SimConfig cfg;
   try {
-    cfg = fsim::load_config(config_dir);
+    cfg = cvsim::load_config(config_dir);
   } catch (const std::exception& e) {
     ROS_FATAL("cannot load config from '%s': %s", config_dir.c_str(), e.what());
     return 1;
@@ -335,7 +335,7 @@ int main(int argc, char** argv) {
   const ros::Duration box_life(std::max(2.0 / fps, 0.05));
   const double latency_s = cfg.bbox.latency_ms / 1000.0;
 
-  ROS_INFO("fs_mono_cam_sim: %dx%d @ %.1f fps, time_mode=%s (x%.2f)%s, jpeg_quality=%d, bundle=%s",
+  ROS_INFO("conevision_sim: %dx%d @ %.1f fps, time_mode=%s (x%.2f)%s, jpeg_quality=%d, bundle=%s",
            cfg.camera.width, cfg.camera.height, fps, time_mode.c_str(), rtf,
            publish_clock ? ", publishing /clock" : "", cfg.camera.jpeg_quality, bundle_dir.c_str());
 
@@ -372,7 +372,7 @@ int main(int argc, char** argv) {
 
   while (ros::ok() && !sh.stop) {
     ros::spinOnce();
-    fsim::Frame* f = pool.pop_ready(std::chrono::milliseconds(2));
+    cvsim::Frame* f = pool.pop_ready(std::chrono::milliseconds(2));
     if (!f) {
       flush_pending();
       continue;
@@ -412,7 +412,7 @@ int main(int argc, char** argv) {
 
     if (pub_odom || pub_imu) {
       double pos[3], quat[4];  // quat = (w, x, y, z), same as euler_to_quat(yaw, pitch, roll)
-      fsim::Trajectory::mocap_pose(f->car, pos, quat);
+      cvsim::Trajectory::mocap_pose(f->car, pos, quat);
       if (pub_odom) {
         nav_msgs::Odometry o;
         o.header.stamp = stamp;

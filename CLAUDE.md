@@ -1,7 +1,9 @@
 # CLAUDE.md
 
-MuJoCo simulator for a Formula Student car whose ONLY sensor is one fast, long-range monocular
-camera (no stereo, no LiDAR). It generates a random cone track, builds a MuJoCo scene (cones,
+MuJoCo ConeVision Sim (repo `MuJoCo-ConeVision-Sim`, ROS package / Python module `conevision_sim`,
+C++ namespace `cvsim`): camera-perception simulator for a vehicle whose ONLY sensor is one fast,
+long-range monocular camera (no stereo, no LiDAR). Tracks/cones follow Formula Student Driverless
+conventions; the project is not affiliated with FS. It generates a random cone track, builds a MuJoCo scene (cones,
 trees, roadside objects, car), drives the car around the centreline, renders the camera and
 publishes over ROS Noetic (rospy):
 1. the RGB feed (raw `sensor_msgs/Image` and/or JPEG `CompressedImage`) at a configurable fps/quality
@@ -22,7 +24,7 @@ classifies colour from `marker.outline_color` RGB thresholds — see config/perc
 ## Layout & ownership
 ```
 config/            track.yaml scene.yaml car.yaml camera.yaml perception.yaml   (ALL tunables live here)
-src/fs_mono_cam_sim/
+src/conevision_sim/
   config.py        load_config(name) / load_all()  -> dict per yaml
   track/           track_types.py (Track contract), generator.py (generate_track), third-party adapter
   scene/           builder.py (build_scene_xml), cone meshes, scenery assets
@@ -56,14 +58,14 @@ tests/
 ## C++ runtime (720p @ 120 fps target)
 - Python exports a bundle once: `scripts/export_bundle.py [--golden]` -> `generated/bundle/`
   (scene.xml+meshes+textures, trajectory.csv = one lap of poses at 1 kHz, config/, golden/).
-- `cpp/` = standalone CMake lib `fs_sim_core` (+ `fsim_bench`, `fsim_test_golden`); public API in
-  `cpp/include/fs_mono_cam_sim/*.h` is a port of render/{renderer,bboxes,sim}.py.
+- `cpp/` = standalone CMake lib `conevision_core` (+ `cvsim_bench`, `cvsim_test_golden`); public API in
+  `cpp/include/conevision_sim/*.h` is a port of render/{renderer,bboxes,sim}.py.
   `cpp/ros/sim_node.cpp` = roscpp node (render thread owns Simulation/GL; publish thread;
   `ros.time_mode` realtime|lockstep). Root `CMakeLists.txt` is catkin and does add_subdirectory(cpp).
 - Windows build: `cmd //c build\\build_cpp.bat` (NMake via VS 18 vcvars64; first configure:
   `cmake -G "NMake Makefiles" -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release -DMUJOCO_DIR=<repo>/.deps/mujoco-3.14.0`).
-  Verify: `build/cpp/fsim_test_golden.exe generated/bundle` (C++ boxes == Python, 0 px) and
-  `build/cpp/fsim_bench.exe generated/bundle 600` (RTX 4060: ~4.4 ms/frame, ~230 fps).
+  Verify: `build/cpp/cvsim_test_golden.exe generated/bundle` (C++ boxes == Python, 0 px) and
+  `build/cpp/cvsim_bench.exe generated/bundle 600` (RTX 4060: ~4.4 ms/frame, ~230 fps).
 - Exes export NvOptimusEnabled so they use the NVIDIA GPU on Optimus laptops. EGL path (Linux) untested.
 - The ROS node can't be built here; check it with g++ -fsyntax-only against `build/mock_ros/include`.
 - `visualization_msgs/ImageMarker::POLYGON` = 3 (not 4).

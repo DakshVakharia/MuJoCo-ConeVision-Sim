@@ -1,6 +1,6 @@
 // Port of CenterlineDriver.state_at(): the lap is pre-sampled at 1 kHz in trajectory.csv, so we just
 // interpolate. Pitch/roll body motion is a pure function of t and is recomputed here.
-#include "fs_mono_cam_sim/trajectory.h"
+#include "conevision_sim/trajectory.h"
 
 #include <algorithm>
 #include <cmath>
@@ -8,7 +8,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace fsim {
+namespace cvsim {
 namespace {
 constexpr double kPi = 3.14159265358979323846;
 constexpr double kDeg2Rad = kPi / 180.0;
@@ -75,4 +75,4 @@ void Trajectory::mocap_pose(const CarState& s, double pos[3], double quat[4]) {
   quat[3] = cr * cp * sy - sr * sp * cy;
 }
 
-}  // namespace fsim
+}  // namespace cvsim

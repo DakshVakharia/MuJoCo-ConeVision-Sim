@@ -1,6 +1,6 @@
 <launch>
-  <!-- MuJoCo Formula Student monocular-camera simulator.
-       Requires: this repo is a ROS package named `fs_mono_cam_sim` (package.xml + CMakeLists.txt, or just a
+  <!-- MuJoCo ConeVision Sim: monocular-camera simulator (Python node).
+       Requires: this repo is a ROS package named `conevision_sim` (package.xml + CMakeLists.txt, or just a
        package.xml, on ROS_PACKAGE_PATH) so that scripts/sim_node.py is found; or run it directly:
            rosrun-free alternative:  python3 scripts/sim_node.py _config_dir:=/path/to/config _seed:=3
        Python deps (mujoco, numpy, opencv-python, pyyaml) must be installed for ROS's python3. -->
@@ -9,7 +9,7 @@
   <arg name="output" default="screen"/>
   <arg name="mujoco_gl" default="egl"/>    <!-- egl = headless Linux; glfw if you have a display -->
 
-  <node pkg="fs_mono_cam_sim" type="sim_node.py" name="fs_mono_cam_sim" output="$(arg output)" required="true">
+  <node pkg="conevision_sim" type="sim_node.py" name="conevision_sim" output="$(arg output)" required="true">
     <env name="MUJOCO_GL" value="$(arg mujoco_gl)"/>
     <param name="config_dir" value="$(arg config_dir)"/>
     <param name="seed" value="$(arg seed)"/>

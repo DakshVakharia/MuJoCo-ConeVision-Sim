@@ -1,10 +1,10 @@
 // Per-frame pipeline, port of render/sim.py: pose -> mj_forward -> render -> boxes.
-#include "fs_mono_cam_sim/simulation.h"
+#include "conevision_sim/simulation.h"
 
 #include <chrono>
 #include <stdexcept>
 
-namespace fsim {
+namespace cvsim {
 namespace {
 using Clock = std::chrono::steady_clock;
 double ms_between(Clock::time_point a, Clock::time_point b) {
@@ -61,4 +61,4 @@ void Simulation::frame(long long k, Frame& out) {
   out.timing.total_ms = ms_between(t0, t3);
 }
 
-}  // namespace fsim
+}  // namespace cvsim

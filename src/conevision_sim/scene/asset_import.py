@@ -6,7 +6,7 @@ and applied to the geom. Vertices are converted Y-up -> Z-up, centred on x/y, ba
 and uniformly scaled to a nominal size in metres.
 
 Usage (after downloading/unzipping the Kenney packs, see assets/scenery/ATTRIBUTION.md):
-    PYTHONPATH=src python -m fs_mono_cam_sim.scene.asset_import <dir containing nature/ racing/ survival/>
+    PYTHONPATH=src python -m conevision_sim.scene.asset_import <dir containing nature/ racing/ survival/>
 """
 import json
 import sys

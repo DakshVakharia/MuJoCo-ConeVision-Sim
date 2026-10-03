@@ -7,12 +7,12 @@ import pytest
 
 mujoco = pytest.importorskip("mujoco")
 
-from fs_mono_cam_sim.car.camera_geometry import (car_mocap_pose, ground_homography,
+from conevision_sim.car.camera_geometry import (car_mocap_pose, ground_homography,
                                                  intrinsic_matrix, pixel_to_ground,
                                                  project_world_points, T_base_cam)
-from fs_mono_cam_sim.car.car_model import add_car
-from fs_mono_cam_sim.car.driver import CarState
-from fs_mono_cam_sim.config import load_all
+from conevision_sim.car.car_model import add_car
+from conevision_sim.car.driver import CarState
+from conevision_sim.config import load_all
 
 CFG = load_all()
 

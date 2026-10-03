@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-namespace fsim {
+namespace cvsim {
 
 struct CameraConfig {            // config/camera.yaml -> camera:
   std::string name = "front_cam";
@@ -64,4 +64,4 @@ struct SimConfig {
 // Throws std::runtime_error on unreadable files.
 SimConfig load_config(const std::string& config_dir);
 
-}  // namespace fsim
+}  // namespace cvsim

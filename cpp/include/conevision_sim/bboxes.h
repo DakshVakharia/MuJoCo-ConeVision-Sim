@@ -1,4 +1,4 @@
-// Fake-YOLO boxes from a segmentation image. Port of src/fs_mono_cam_sim/render/bboxes.py.
+// Fake-YOLO boxes from a segmentation image. Port of src/conevision_sim/render/bboxes.py.
 #pragma once
 
 #include <cstdint>
@@ -8,10 +8,10 @@
 
 #include <mujoco/mujoco.h>
 
-#include "fs_mono_cam_sim/config.h"
-#include "fs_mono_cam_sim/renderer.h"
+#include "conevision_sim/config.h"
+#include "conevision_sim/renderer.h"
 
-namespace fsim {
+namespace cvsim {
 
 struct Detection {
   std::string cls;                 // blue | yellow | orange | orange_big
@@ -40,4 +40,4 @@ class BoxComputer {
   std::vector<int> index_of_body_;      // body id -> cone index or -1
 };
 
-}  // namespace fsim
+}  // namespace cvsim

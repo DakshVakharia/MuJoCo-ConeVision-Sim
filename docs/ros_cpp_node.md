@@ -1,4 +1,4 @@
-# C++ ROS node (`fs_mono_cam_sim_node`)
+# C++ ROS node (`conevision_sim_node`)
 
 Runtime node for 1280x720 @ 120 fps. Python stays the offline tool; it writes a *bundle* that the C++
 node loads: `generated/bundle/{scene.xml, trajectory.csv, config/}`.
@@ -15,7 +15,7 @@ export MUJOCO_DIR=$HOME/mujoco-3.14.0          # put it in ~/.bashrc
 
 # 2. workspace
 mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
-git clone <this repo> fs_mono_cam_sim            # branch feature/cpp-render-node
+git clone <this repo> conevision_sim            # branch feature/cpp-render-node
 cd ~/catkin_ws
 rosdep install --from-paths src --ignore-src -y  # roscpp, image_transport, compressed_image_transport,
                                                  # foxglove_msgs, yaml-cpp, EGL dev headers ...
@@ -31,7 +31,7 @@ otherwise build it from source in the workspace). The binary gets an RPATH to `$
 ## Export the bundle (offline, Python)
 
 ```bash
-cd ~/catkin_ws/src/fs_mono_cam_sim
+cd ~/catkin_ws/src/conevision_sim
 pip3 install -r requirements.txt
 python3 scripts/export_bundle.py                 # -> generated/bundle/
 ```
@@ -43,10 +43,10 @@ read from `generated/bundle/config/*.yaml` (copied from `config/`), or from `~co
 
 ```bash
 roscore &
-roslaunch fs_mono_cam_sim sim_cpp.launch                       # realtime, bundle in generated/bundle
-roslaunch fs_mono_cam_sim sim_cpp.launch lockstep:=true        # deterministic, publishes /clock, use_sim_time
-roslaunch fs_mono_cam_sim sim_cpp.launch bundle_dir:=/path/to/bundle
-rosrun fs_mono_cam_sim fs_mono_cam_sim_node _bundle_dir:=/path/to/bundle
+roslaunch conevision_sim sim_cpp.launch                       # realtime, bundle in generated/bundle
+roslaunch conevision_sim sim_cpp.launch lockstep:=true        # deterministic, publishes /clock, use_sim_time
+roslaunch conevision_sim sim_cpp.launch bundle_dir:=/path/to/bundle
+rosrun conevision_sim conevision_sim_node _bundle_dir:=/path/to/bundle
 ```
 
 Private params: `~bundle_dir`, `~config_dir` (default `<bundle>/config`), `~time_mode`

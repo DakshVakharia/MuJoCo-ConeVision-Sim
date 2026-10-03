@@ -7,9 +7,9 @@
 
 #include <mujoco/mujoco.h>
 
-#include "fs_mono_cam_sim/config.h"
+#include "conevision_sim/config.h"
 
-namespace fsim {
+namespace cvsim {
 
 // Owns an OpenGL context with no visible window:
 //   Linux  : EGL headless (prefers an NVIDIA device via EGL_EXT_device_enumeration)
@@ -36,7 +36,7 @@ class CameraRenderer {
  public:
   // Creates its own GlContext, an mjvScene, and two mjrContexts in that GL context:
   // RGB (offsamples = render.msaa_samples or the model value) and segmentation (no MSAA).
-  // Port of src/fs_mono_cam_sim/render/renderer.py. All calls must come from ONE thread.
+  // Port of src/conevision_sim/render/renderer.py. All calls must come from ONE thread.
   CameraRenderer(const mjModel* m, const SimConfig& cfg);
   ~CameraRenderer();
   CameraRenderer(const CameraRenderer&) = delete;
@@ -55,4 +55,4 @@ class CameraRenderer {
   int cam_id_ = -1;
 };
 
-}  // namespace fsim
+}  // namespace cvsim

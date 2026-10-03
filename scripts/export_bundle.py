@@ -22,10 +22,10 @@ from pathlib import Path
 
 import numpy as np
 
-from fs_mono_cam_sim.car.driver import CenterlineDriver
-from fs_mono_cam_sim.config import CONFIG_DIR, GENERATED_DIR, load_all
-from fs_mono_cam_sim.scene.builder import write_scene
-from fs_mono_cam_sim.track.generator import generate_track
+from conevision_sim.car.driver import CenterlineDriver
+from conevision_sim.config import CONFIG_DIR, GENERATED_DIR, load_all
+from conevision_sim.scene.builder import write_scene
+from conevision_sim.track.generator import generate_track
 
 TRAJ_RATE_HZ = 1000.0
 
@@ -52,7 +52,7 @@ def write_trajectory(driver, path):
 def write_golden(cfg, track, out_dir, frames):
     """Noise-free Python detections for the given frame indices (reference for the C++ port)."""
     import cv2
-    from fs_mono_cam_sim.render.sim import Simulation
+    from conevision_sim.render.sim import Simulation
 
     cfg = {**cfg, "perception": {**cfg["perception"], "bbox": {
         **cfg["perception"]["bbox"], "center_jitter_px": 0.0, "size_jitter_frac": 0.0,

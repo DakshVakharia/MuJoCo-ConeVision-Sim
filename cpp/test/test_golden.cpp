@@ -1,4 +1,4 @@
-// fsim_test_golden <bundle_dir>
+// cvsim_test_golden <bundle_dir>
 // Compares C++ detections with the Python reference frames in <bundle>/golden/frame_*.json
 // (written by `scripts/export_bundle.py --golden`, noise-free). Runs twice: full-res segmentation
 // (tight tolerance) and render.seg_scale = 0.5 (looser). Exit code 0 = pass, 1 = fail.
@@ -16,7 +16,7 @@
 #include <nlohmann/json.hpp>
 
 #include "../tools/config_override.h"
-#include "fs_mono_cam_sim/simulation.h"
+#include "conevision_sim/simulation.h"
 
 #ifdef _WIN32
 // Ask Optimus/PowerXpress laptops to run this exe on the discrete GPU (read by the driver at load).
@@ -39,11 +39,11 @@ struct Result {
 // Returns the number of failures for this pass; prints details of every failure.
 Result run_pass(const std::string& bundle, double seg_scale, double box_tol_px) {
   Result r;
-  fsim_tools::ConfigOverride ov;
+  cvsim_tools::ConfigOverride ov;
   ov.noise_off = true;
   ov.seg_scale = seg_scale;
-  const std::string cfg_dir = fsim_tools::make_config(bundle, ov, "golden");
-  fsim::Simulation sim(bundle, cfg_dir);
+  const std::string cfg_dir = cvsim_tools::make_config(bundle, ov, "golden");
+  cvsim::Simulation sim(bundle, cfg_dir);
   const int min_px = sim.config().bbox.min_visible_pixels;
   const double min_h = sim.config().bbox.min_box_height_px;
 
@@ -52,7 +52,7 @@ Result run_pass(const std::string& bundle, double seg_scale, double box_tol_px) 
     if (e.path().extension() == ".json") files.push_back(e.path());
   std::sort(files.begin(), files.end());
 
-  fsim::Frame frame;
+  cvsim::Frame frame;
   for (const auto& path : files) {
     std::ifstream in(path);
     const json g = json::parse(in);
@@ -70,7 +70,7 @@ Result run_pass(const std::string& bundle, double seg_scale, double box_tol_px) 
       ++r.failures;
     }
 
-    std::map<std::pair<std::string, int>, const fsim::Detection*> mine;
+    std::map<std::pair<std::string, int>, const cvsim::Detection*> mine;
     for (const auto& d : frame.detections) mine[{d.cls, d.index}] = &d;
 
     for (const auto& pd : g["detections"]) {
@@ -88,7 +88,7 @@ Result run_pass(const std::string& bundle, double seg_scale, double box_tol_px) 
         }
         continue;
       }
-      const fsim::Detection& cd = *it->second;
+      const cvsim::Detection& cd = *it->second;
       const double e = std::max({std::fabs(cd.x_min - pd["x_min"].get<double>()),
                                  std::fabs(cd.y_min - pd["y_min"].get<double>()),
                                  std::fabs(cd.x_max - pd["x_max"].get<double>()),
@@ -108,7 +108,7 @@ Result run_pass(const std::string& bundle, double seg_scale, double box_tol_px) 
       mine.erase(it);
     }
     for (const auto& kv : mine) {                       // detections Python does not have
-      const fsim::Detection& cd = *kv.second;
+      const cvsim::Detection& cd = *kv.second;
       if (cd.visible_pixels < 2 * min_px || (cd.y_max - cd.y_min) < min_h + 2) {
         ++r.border_skipped;
       } else {
