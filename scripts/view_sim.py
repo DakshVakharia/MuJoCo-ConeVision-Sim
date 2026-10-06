@@ -23,6 +23,7 @@ def main():
     ap.add_argument("--config-dir", default=str(CONFIG_DIR))
     ap.add_argument("--track-seed", type=int, default=None, help="override track.yaml seed")
     ap.add_argument("--speed", type=float, default=1.0, help="playback speed factor")
+    ap.add_argument("--trajectory", default=None, help="replay this trajectory.csv (e.g. a Chrono run) instead of the kinematic driver")
     args = ap.parse_args()
 
     cfg = load_all(args.config_dir)
@@ -31,7 +32,13 @@ def main():
     track = generate_track(cfg["track"])
     model = mujoco.MjModel.from_xml_string(build_scene_xml(track, cfg))
     data = mujoco.MjData(model)
-    driver = CenterlineDriver(track, cfg["car"])
+    if args.trajectory:
+        from conevision_sim.car.trajectory_io import TrajectoryDriver
+        driver = TrajectoryDriver(args.trajectory, car_cfg=cfg["car"])
+    else:
+        driver = CenterlineDriver(track, cfg["car"])
+    # a single (loop=0) run is replayed in a loop here so the window never freezes
+    replay_len = driver.lap_time if args.trajectory and not getattr(driver, "loop", 1) else None
     car = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "car")
     print(f"track seed={track.seed} length={track.length():.0f} m; close the window to quit")
 
@@ -42,6 +49,8 @@ def main():
         t0 = time.perf_counter()
         while viewer.is_running():
             t = (time.perf_counter() - t0) * args.speed
+            if replay_len:
+                t %= replay_len
             pos, quat = car_mocap_pose(driver.state_at(t))
             data.mocap_pos[0], data.mocap_quat[0] = pos, quat
             mujoco.mj_forward(model, data)

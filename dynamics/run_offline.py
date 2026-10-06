@@ -82,7 +82,8 @@ def build_path_follower_driver(vehicle, centerline_points):
 
 
 def run_simulation(track_yaml, vehicle_name="sedan", laps=2, v_target=8.0,
-                   out_csv=None, dt=0.001, settle_time=7.0):
+                   out_csv=None, dt=0.001, settle_time=7.0,
+                   profile=False, a_lat=7.0, a_accel=4.0, a_brake=6.0):
     """Run vehicle dynamics with CORRECTED IMU calculation."""
 
     print(f"Loading track from {track_yaml}")
@@ -161,8 +162,23 @@ def run_simulation(track_yaml, vehicle_name="sedan", laps=2, v_target=8.0,
     cutoff = 20
     sos = signal.butter(2, cutoff/nyquist, output='sos')
 
+    # Optional corner-limited speed profile: fast on straights, slow for corners.
+    # v(s) = min(v_target, sqrt(a_lat / curvature)), then limited by acceleration and braking.
+    v_loop = None
+    if profile:
+        from scipy.spatial import cKDTree
+        from speed_profile import compute_speed_profile
+        n0 = len(centerline)
+        prof = compute_speed_profile(np.vstack([centerline] * 3), v_max=v_target,
+                                     a_lat=a_lat, a_accel=a_accel, a_brake=a_brake)
+        v_loop = prof['v_final'][n0:2 * n0]      # the middle copy of 3 tiled laps is the steady-state lap
+        tree = cKDTree(centerline)
+        ds_pt = track_length / n0
+        print(f"Speed profile: a_lat={a_lat} m/s^2 -> target speeds {v_loop.min():.1f}..{v_loop.max():.1f} m/s")
+    avg_speed = 0.55 * v_target if profile else v_target
+
     # Simulate laps - COLLECT DATA ONLY
-    max_sim_time = (track_length / v_target) * laps * 1.5
+    max_sim_time = (track_length / avg_speed) * laps * 1.5 + 10.0
     max_steps = int(max_sim_time / dt)
 
     print(f"Simulating {laps} laps...")
@@ -185,12 +201,20 @@ def run_simulation(track_yaml, vehicle_name="sedan", laps=2, v_target=8.0,
 
     distance_driven = 0.0
     prev_pos = np.array([start_pose[0], start_pose[1]])
+    speed_now = 0.0
 
     for i in range(max_steps):
         t = i * dt
 
-        # Simple speed ramp
-        if t < 10.0:
+        if v_loop is not None:
+            _, idx = tree.query(prev_pos)
+            lead = int(0.3 * max(speed_now, 1.0) / ds_pt)           # look 0.3 s ahead so braking starts on time
+            desired_speed = v_loop[(idx + lead) % len(v_loop)]
+            desired_speed = min(desired_speed, 1.0 + a_accel * t)    # gentle start from standstill
+            remaining = track_length * laps - distance_driven
+            desired_speed = min(desired_speed, np.sqrt(2.0 * a_brake * max(remaining, 0.0)) + 0.3)  # stop at the end
+        # Simple speed ramp (constant speed)
+        elif t < 10.0:
             desired_speed = v_target * (t / 10.0)
         elif distance_driven > track_length * laps - (v_target * 10.0):
             desired_speed = v_target * max(0.1, (track_length * laps - distance_driven) / (v_target * 10.0))
@@ -212,6 +236,7 @@ def run_simulation(track_yaml, vehicle_name="sedan", laps=2, v_target=8.0,
         pos = chassis.GetPos()
         quat = chassis.GetRot()
         lin_vel = chassis.GetLinearVelocity()
+        speed_now = float(np.linalg.norm([lin_vel[0], lin_vel[1], lin_vel[2]]))
 
         curr_pos = np.array([pos[0], pos[1]])
         ds = np.linalg.norm(curr_pos - prev_pos)
@@ -346,7 +371,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--track', default='generated/bundle/track.yaml')
     parser.add_argument('--laps', type=int, default=2)
-    parser.add_argument('--vmax', type=float, default=8.0)
+    parser.add_argument('--vmax', type=float, default=8.0,
+                        help='target speed (m/s); with --profile it is the top speed on straights')
+    parser.add_argument('--profile', action='store_true',
+                        help='corner-limited speed profile: fast on straights, slower for corners')
+    parser.add_argument('--a-lat', type=float, default=7.0, help='lateral acceleration budget for corners (m/s^2)')
+    parser.add_argument('--a-accel', type=float, default=4.0, help='max acceleration (m/s^2)')
+    parser.add_argument('--a-brake', type=float, default=6.0, help='max braking (m/s^2)')
     parser.add_argument('--out', default='generated/chrono/trajectory_chrono.csv')
 
     args = parser.parse_args()
@@ -357,6 +388,10 @@ if __name__ == '__main__':
         laps=args.laps,
         v_target=args.vmax,
         out_csv=args.out,
+        profile=args.profile,
+        a_lat=args.a_lat,
+        a_accel=args.a_accel,
+        a_brake=args.a_brake,
     )
 
     print(f"\nSimulation complete!")

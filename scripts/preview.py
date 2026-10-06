@@ -54,6 +54,8 @@ def main():
     ap.add_argument("--show", action="store_true", help="show a live window (q/Esc quits)")
     ap.add_argument("--config-dir", default=str(CONFIG_DIR))
     ap.add_argument("--seed", type=int, default=None, help="bbox noise seed")
+    ap.add_argument("--speed", type=float, default=1.0, help="playback speed: render every Nth simulated frame (4 ~ real time at 60 fps on a slow GPU)")
+    ap.add_argument("--trajectory", default=None, help="replay this trajectory.csv (e.g. a Chrono run) instead of the kinematic driver")
     ap.add_argument("--yolo-dir", default=None,
                     help="dump images/ + labels/ (YOLO txt) + classes.txt into this folder")
     ap.add_argument("--yolo-every", type=int, default=1, help="dump every Nth frame")
@@ -61,11 +63,13 @@ def main():
     args = ap.parse_args()
 
     cfg = load_all(args.config_dir)
+    if args.trajectory:
+        cfg["car"]["trajectory_csv"] = args.trajectory
     sim = Simulation(cfg, seed=args.seed)
     cam = cfg["camera"]
     fps = float(cam["fps"])
     colors = cfg["perception"]["bbox"]["outline_colors"]
-    n = int(round(args.seconds * fps))
+    n = int(round(args.seconds * fps / max(args.speed, 1e-6)))
 
     writer = None
     if args.out:
@@ -83,7 +87,7 @@ def main():
     sums = {}
     t_wall = time.perf_counter()
     for k in range(n):
-        f = sim.frame_at_index(k)
+        f = sim.frame_at_index(int(round(k * args.speed)))
         for key, v in f.timings.items():
             sums[key] = sums.get(key, 0.0) + v
         need_img = writer or args.show or args.frames_png
