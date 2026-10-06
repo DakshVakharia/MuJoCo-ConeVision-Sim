@@ -289,7 +289,9 @@ advances exactly 1/fps per frame).
 **Not yet verified**
 - The ROS node running on real ROS (needs your Ubuntu machine).
 - Headless rendering on Linux ("EGL").
-- The Chrono vehicle run: an agent is working on it as this is written. Check `dynamics/README.md`.
+- Chrono vehicle physics: a stock Sedan completes 2 laps on our track (within 0.6 m of the centreline) and its tilt
+  drives the camera (roll about 1.35 deg/g, pitch about 0.9 deg/g; see `dynamics/README.md`). Not yet done: an FS-class
+  vehicle (the Sedan is a softer road car) and live, closed-loop driving.
 
 **Honest limitations**
 - The ground is perfectly flat (no slopes or bumps).

@@ -70,6 +70,27 @@ tests/
 - The ROS node can't be built here; check it with g++ -fsyntax-only against `build/mock_ros/include`.
 - `visualization_msgs/ImageMarker::POLYGON` = 3 (not 4).
 
+## Chrono vehicle dynamics (`dynamics/`, branch feature/chrono-dynamics)
+Purpose: realistic car tilt (pitch/roll), z and IMU data for the camera. Offline only: Chrono writes
+`trajectory.csv` (contract: `docs/trajectory_contract.md`), the renderer replays it.
+- Env: conda env `chrono` (Python 3.12, PyChrono 10) at `C:/Users/daksh/miniforge3/envs/chrono`, NOT the repo `.venv`.
+  ALWAYS put `<env>/Library/bin` on PATH before importing pychrono, else a "Failed loading SDL3 library" dialog blocks
+  the process forever (SDL2.dll there is a shim that needs SDL3.dll). Git Bash:
+  `export PATH="/c/Users/daksh/miniforge3/envs/chrono/Library/bin:/c/Users/daksh/miniforge3/envs/chrono:$PATH"`.
+- Run: `python dynamics/run_offline.py --track generated/bundle/track.yaml --laps 2 --vmax 8 --out generated/chrono/trajectory_chrono.csv`,
+  then the acceptance test `python dynamics/check_trajectory.py <csv> --track generated/bundle/track.yaml --laps 2` (use the .venv python),
+  plots `dynamics/plot_trajectory.py`, and `scripts/export_bundle.py --trajectory <csv> --golden --out generated/bundle_chrono`.
+- Chrono API facts (verified): load `sedan/vehicle/Sedan_Vehicle.json` (NOT `sedan/Sedan.json`: a spec file that crashes
+  WheeledVehicle) plus engine/transmission/tire JSON via `veh.GetVehicleDataFile`; `chrono.ChBezierCurve(list_of_ChVector3d)`;
+  `veh.ChPathFollowerDriver(vehicle, path, name, speed)` with `SetDesiredSpeed`. `chassis.GetPosDt2()` returns ~0, so do NOT use it:
+  derive acceleration from the logged velocity (np.gradient + 20 Hz zero-phase low-pass), then f_body = R^T (a + [0,0,9.81]).
+  `quat_to_rotation_matrix` in run_offline.py is body->world; einsum('nji,nj->ni', R, a) gives R^T a (do not transpose R first).
+- Two agent reports claimed success while the data was wrong. Always run `check_trajectory.py` and compare ax/ay with
+  d(v)/dt and v*yaw_rate computed from the same file before trusting a Chrono CSV.
+- The stock Sedan is a road car (roll ~1.35 deg/g, pitch ~0.9 deg/g). `dynamics/adsdv/REVIEW.md` lists corrected FS-class
+  parameters (mostly assumptions; NOT the real ADS-DV). Editing a JSON copy to those values is not done yet.
+- Chrono runs are single runs (loop=0): the car stops at the end of the CSV (the renderer clamps).
+
 ## Gotchas learned during the build
 - `statistic center` is the track centre (not 0 0 0) because the sun shadow map is centred there; extent stays 1.
 - Ground plane is 2 cm below the asphalt strip top (z=0); cones/car stand at z=0.
