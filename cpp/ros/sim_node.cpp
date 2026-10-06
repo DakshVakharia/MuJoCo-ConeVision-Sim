@@ -418,26 +418,57 @@ int main(int argc, char** argv) {
         o.header.stamp = stamp;
         o.header.frame_id = "map";
         o.child_frame_id = "base_link";
-        o.pose.pose.position.x = f->car.x;
-        o.pose.pose.position.y = f->car.y;
-        o.pose.pose.position.z = 0.0;
+        o.pose.pose.position.x = pos[0];
+        o.pose.pose.position.y = pos[1];
+        o.pose.pose.position.z = pos[2];
         o.pose.pose.orientation.w = quat[0];
         o.pose.pose.orientation.x = quat[1];
         o.pose.pose.orientation.y = quat[2];
         o.pose.pose.orientation.z = quat[3];
         o.twist.twist.linear.x = f->car.v;
-        o.twist.twist.angular.z = f->car.yaw_rate;
+        o.twist.twist.angular.z = f->car.wz;
+        // Covariance: small diagonal values for position and orientation
+        for (int i = 0; i < 36; ++i) o.pose.covariance[i] = 0.0;
+        o.pose.covariance[0] = 1e-4;   // x
+        o.pose.covariance[7] = 1e-4;   // y
+        o.pose.covariance[14] = 1e-4;  // z
+        o.pose.covariance[21] = 1e-2;  // roll
+        o.pose.covariance[28] = 1e-2;  // pitch
+        o.pose.covariance[35] = 1e-2;  // yaw
+        for (int i = 0; i < 36; ++i) o.twist.covariance[i] = 0.0;
+        o.twist.covariance[0] = 1e-4;   // vx
+        o.twist.covariance[35] = 1e-2;  // wz
         pub_odom.publish(o);
       }
       if (pub_imu) {
         sensor_msgs::Imu m;
         m.header.stamp = stamp;
-        m.header.frame_id = "base_link";
+        m.header.frame_id = cfg.ros.imu_frame_id;
         m.orientation.w = quat[0];
         m.orientation.x = quat[1];
         m.orientation.y = quat[2];
         m.orientation.z = quat[3];
-        m.angular_velocity.z = f->car.yaw_rate;
+        // Orientation covariance: small diagonal values
+        for (int i = 0; i < 9; ++i) m.orientation_covariance[i] = 0.0;
+        m.orientation_covariance[0] = 1e-4;
+        m.orientation_covariance[4] = 1e-4;
+        m.orientation_covariance[8] = 1e-2;
+        m.angular_velocity.x = f->car.wx;
+        m.angular_velocity.y = f->car.wy;
+        m.angular_velocity.z = f->car.wz;
+        // Angular velocity covariance
+        for (int i = 0; i < 9; ++i) m.angular_velocity_covariance[i] = 0.0;
+        m.angular_velocity_covariance[0] = 1e-4;
+        m.angular_velocity_covariance[4] = 1e-4;
+        m.angular_velocity_covariance[8] = 1e-2;
+        m.linear_acceleration.x = f->car.ax;
+        m.linear_acceleration.y = f->car.ay;
+        m.linear_acceleration.z = f->car.az;
+        // Linear acceleration covariance
+        for (int i = 0; i < 9; ++i) m.linear_acceleration_covariance[i] = 0.0;
+        m.linear_acceleration_covariance[0] = 1e-4;
+        m.linear_acceleration_covariance[4] = 1e-4;
+        m.linear_acceleration_covariance[8] = 1e-2;
         pub_imu.publish(m);
       }
     }

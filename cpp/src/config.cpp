@@ -73,6 +73,7 @@ SimConfig load_config(const std::string& config_dir) {
   c.ros.odom_topic = get<std::string>(ros, "odom_topic", c.ros.odom_topic);
   c.ros.publish_imu = get<bool>(ros, "publish_imu", c.ros.publish_imu);
   c.ros.imu_topic = get<std::string>(ros, "imu_topic", c.ros.imu_topic);
+  c.ros.imu_frame_id = get<std::string>(ros, "imu_frame_id", c.ros.imu_frame_id);
   c.ros.realtime_factor = get<double>(ros, "realtime_factor", c.ros.realtime_factor);
   c.ros.publish_clock = get<bool>(ros, "publish_clock", c.ros.publish_clock);
   c.ros.time_mode = get<std::string>(ros, "time_mode", c.ros.time_mode);

@@ -1,0 +1,100 @@
+# FS-AI ADS-DV Vehicle Parameters (Machine-Readable)
+# All values SI units unless noted
+# SOURCED = value from published documentation
+# ASSUMPTION = educated guess based on Formula Student typical specs
+
+# CHASSIS & MASS
+total_mass_kg: 320                    # assumption: midpoint between 255 kg (FS-Driverless) and 365 kg (4WD FS electric)
+sprung_mass_kg: 250                   # assumption: ~78% of total mass
+unsprung_mass_front_kg: 20            # assumption: per axle wheels + suspension
+unsprung_mass_rear_kg: 20             # assumption: per axle wheels + suspension
+cog_height_m: 0.30                    # assumption: 300 mm typical for small FS car
+cog_longitudinal_from_front_axle_m: 0.75  # assumption: 48% weight distribution (front biased)
+
+# MOMENTS OF INERTIA (at center of gravity)
+inertia_pitch_ixx_kg_m2: 50           # assumption: scaled from sedan Iyy (944.1) by (L_FS/L_sed)^2
+inertia_roll_iyy_kg_m2: 30            # assumption: ~0.6 * Ixx typical for FS
+inertia_yaw_izz_kg_m2: 60             # assumption: ~1.2 * Iyy typical for FS
+products_of_inertia_kg_m2: 0          # sourced: symmetric vehicle
+
+# GEOMETRY & DIMENSIONS
+wheelbase_m: 1.550                    # sourced: 10.3390/vehicles8050111
+track_width_front_m: 1.200            # sourced: UniNa Corse / typical FS
+track_width_rear_m: 1.190             # sourced: UniNa Corse / typical FS
+vehicle_length_m: 2.800               # assumption: typical FS car length
+vehicle_width_m: 1.200                # assumption: typical FS car width (≈ track width)
+vehicle_height_m: 0.60                # assumption: low single-seater profile
+overhang_front_m: 0.600               # assumption: balance around wheelbase
+overhang_rear_m: 0.650                # assumption: balance around wheelbase
+
+# TIRE & WHEEL
+wheel_rim_diameter_mm: 330            # assumption: 13" standard FS rim ≈ 330 mm
+tire_unloaded_radius_m: 0.330         # assumption: typical 13" tire ≈ 660 mm diameter
+tire_width_m: 0.200                   # assumption: 6-7" width for 13" FS rim
+tire_vertical_stiffness_n_per_m: 150000    # assumption: typical racing tire ~150 kN/m
+tire_mass_per_wheel_kg: 6.0           # assumption: lightweight 13" racing tire
+wheel_mass_per_wheel_kg: 6.0          # assumption: 13" aluminum rim
+rolling_resistance_coefficient: 0.015 # sourced: Chrono sedan TMeasyTire model
+tire_friction_coefficient: 0.80       # sourced: typical racing tire slick
+
+# SUSPENSION - FRONT AXLE
+suspension_type_front: "DoubleWishbone"    # sourced: standard FS suspension
+spring_rate_front_n_per_m: 50000      # assumption: 50 N/mm typical FS (scaling from larger cars)
+damper_rate_front_low_speed_ns_per_m: 5000    # assumption: typical FS front low-speed
+damper_rate_front_high_speed_ns_per_m: 3000   # assumption: typical FS front high-speed
+ride_height_front_mm: 80              # assumption: small car typical
+camber_angle_front_deg: 0.0           # assumption: neutral baseline
+toe_angle_front_deg: 0.0              # assumption: neutral baseline
+anti_roll_bar_stiffness_front_nm_per_rad: 8000    # assumption: typical FS front ARB
+
+# SUSPENSION - REAR AXLE
+suspension_type_rear: "DoubleWishbone"     # sourced: standard FS suspension
+spring_rate_rear_n_per_m: 50000       # assumption: 50 N/mm typical FS
+damper_rate_rear_low_speed_ns_per_m: 6000     # assumption: rear typically stiffer
+damper_rate_rear_high_speed_ns_per_m: 3500    # assumption: typical FS rear high-speed
+ride_height_rear_mm: 80               # assumption: small car typical
+camber_angle_rear_deg: 0.0            # assumption: neutral baseline
+toe_angle_rear_deg: 0.0               # assumption: neutral baseline
+anti_roll_bar_stiffness_rear_nm_per_rad: 5000     # assumption: 60% of front typical
+
+# STEERING
+steering_type: "RackAndPinion"        # sourced: standard FS; Chrono sedan uses this
+maximum_steering_angle_deg: 20.0      # assumption: typical FS max ~25°, conservative 20°
+steering_ratio: 12.0                  # assumption: typical small car rack-pinion ratio
+pinion_radius_m: 0.03                 # sourced: Chrono sedan template value
+
+# DRIVETRAIN & POWERTRAIN
+driveline_configuration: "RearWheelDrive_2WD"    # assumption: typical small FS
+motor_max_power_kw: 60.0              # assumption: typical FS electric motor (~80 kW peak)
+motor_max_torque_nm: 150.0            # assumption: typical FS motor at wheel output
+gear_ratio_final_drive: 0.20          # sourced: Chrono sedan template (conical gear)
+differential_locking_limit: 100.0     # sourced: Chrono sedan template
+
+# BRAKE SYSTEM
+brake_type: "HydraulicDisc"           # assumption: standard FS; Chrono uses simple max-torque
+maximum_brake_torque_per_wheel_nm: 1200    # assumption: scaled from sedan (2000 Nm) by mass ratio
+brake_bias_front_percent: 60.0        # assumption: typical FS front-biased bias
+brake_bias_rear_percent: 40.0         # assumption: typical FS front-biased bias
+
+# AERODYNAMICS (minimal for low-speed FS car)
+frontal_area_m2: 1.0                  # sourced: 10.3390/vehicles8050111 table
+drag_coefficient_cd: 0.40             # sourced: 10.3390/vehicles8050111 table
+lift_coefficient_front_cl: 0.0        # assumption: no significant aero on FS car
+lift_coefficient_rear_cl: 0.0         # assumption: no significant aero on FS car
+
+# DRIVER (not used in suspension dynamics but may be needed for CoG calc)
+driver_mass_kg: 70.0                  # assumption: standard driver mass
+driver_position_x_m: 0.8              # assumption: center of driver relative to front axle
+driver_position_z_m: 0.6              # assumption: driver CoG height
+
+# SENSOR INSTALLATION (for camera simulation)
+camera_offset_x_m: 0.0                # placeholder: camera position relative to chassis CoG (forward)
+camera_offset_y_m: 0.0                # placeholder: camera lateral offset
+camera_offset_z_m: 0.4                # assumption: camera mounted ~0.4 m above CoG (roof height)
+
+# SIMULATION TUNING (start values for Chrono)
+gravity_m_per_s2: 9.81                # sourced: standard gravity
+pitch_natural_frequency_hz: 2.5       # assumption: target (adjust via spring/mass)
+roll_natural_frequency_hz: 2.2        # assumption: target (adjust via ARB/mass)
+pitch_damping_ratio: 0.6              # assumption: target (0.6-0.8 typical)
+roll_damping_ratio: 0.6               # assumption: target (0.6-0.8 typical)

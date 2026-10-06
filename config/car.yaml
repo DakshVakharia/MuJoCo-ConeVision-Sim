@@ -31,3 +31,15 @@ car:
     pitch_amplitude_deg: 0.0
     roll_amplitude_deg: 0.0
     frequency_hz: 1.5
+
+  # Optional tilt model: simulates realistic body pitch/roll from accelerations
+  # Typical FS-car values; assumes suspension stiffness/damping from car dynamics.
+  # If enabled, kinematic_columns() adds pitch/roll computed from longitudinal/lateral acceleration
+  # through a 2nd-order critically-/under-damped filter, plus IMU-frame accelerations (ax, ay, az)
+  # and angular velocities (wx, wy, wz).
+  tilt_model:
+    enabled: false
+    pitch_deg_per_g: 0.6      # nose-down tilt per unit braking deceleration
+    roll_deg_per_g: 1.0       # outboard roll per unit lateral acceleration
+    natural_freq_hz: 2.5      # suspension resonance
+    damping: 0.7              # fraction of critical damping (0.7 = slightly underdamped)

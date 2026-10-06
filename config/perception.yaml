@@ -41,10 +41,11 @@ ros:
   bbox_topic: /camera/bounding_boxes                # foxglove_msgs/ImageMarkerArray
 
   # Optional ground-truth extras (off by default; the car has only a camera).
-  publish_odom: false
-  odom_topic: /sim/ground_truth/odom                # nav_msgs/Odometry
-  publish_imu: false
-  imu_topic: /sim/imu                               # sensor_msgs/Imu
+  publish_odom: true                                # publish nav_msgs/Odometry
+  odom_topic: /slam/state                           # nav_msgs/Odometry topic
+  publish_imu: true                                 # publish sensor_msgs/Imu
+  imu_topic: /zed2/zed_node/imu/data                # sensor_msgs/Imu topic
+  imu_frame_id: base_link                           # frame_id for IMU messages
 
   realtime_factor: 1.0        # 1.0 = real time, 0.5 = half speed
   publish_clock: false        # publish /clock (sim time) for use_sim_time setups

@@ -69,6 +69,32 @@ Images go through `image_transport`, so every installed plugin (`/compressed`, `
 until somebody subscribes (the JPEG is only encoded when `/compressed` has subscribers). To really
 disable one use the standard `<image_topic>/disable_pub_plugins` param.
 
+### Optional: Odometry and IMU (ground truth)
+
+The node can publish vehicle state as ground-truth odometry and IMU messages (disabled by default).
+Set `ros.publish_odom: true` and `ros.publish_imu: true` in `config/perception.yaml`.
+
+**Odometry** (`nav_msgs/Odometry`):
+- Topic (configurable): `/slam/state`
+- Pose: vehicle position (x, y, z in world frame) and orientation (roll, pitch, yaw quaternion)
+- Twist: linear velocity (vx only, in world frame) and angular velocity (wz only, yaw rate)
+- Frames: `map` (parent) → `base_link` (child)
+- Timestamp: same as the image frame
+
+**IMU** (`sensor_msgs/Imu`):
+- Topic (configurable): `/zed2/zed_node/imu/data`
+- Orientation: same quaternion as odometry (R = Rz(yaw) Ry(pitch) Rx(roll))
+- Angular velocity: (wx, wy, wz) in body frame from trajectory.csv (or defaults: wz = yaw_rate, wx/wy = 0)
+- Linear acceleration: (ax, ay, az) in body frame from trajectory.csv (gravity included: az defaults to +9.81)
+- Frame ID (configurable, default `base_link`): `ros.imu_frame_id`
+- Timestamp: same as the image frame
+- Covariance: diagonal elements (standard deviations in SI units) reflect trajectory source (kinematic
+  model typical values: orientation ~1e-4 rad, acceleration ~1e-2 m/s²)
+
+Both share the image timestamp and come from the same `trajectory.csv`. If roll/pitch columns are
+absent from the CSV, the kinematic body_motion sinusoids apply (legacy behavior); otherwise, roll/pitch
+are interpolated from the CSV. Sign conventions: roll positive = right side down, pitch positive = nose down.
+
 ### Time modes
 
 * `realtime`: frame k is due at `wall0 + k/(fps*realtime_factor)`. If rendering falls behind, frame

@@ -36,7 +36,7 @@ def euler_to_quat(yaw, pitch, roll):
 
 
 class Simulation:
-    def __init__(self, cfg, track=None, seed=None):
+    def __init__(self, cfg, track=None, seed=None, driver=None):
         self.cfg = cfg
         self.cam_cfg = cfg["camera"]
         self.bbox_cfg = cfg["perception"]["bbox"]
@@ -44,7 +44,16 @@ class Simulation:
         self.track = track if track is not None else generate_track(cfg["track"])
         self.model = mujoco.MjModel.from_xml_string(build_scene_xml(self.track, cfg))
         self.data = mujoco.MjData(self.model)
-        self.driver = CenterlineDriver(self.track, cfg["car"])
+
+        # Use provided driver, or load from trajectory_csv if specified, or default to CenterlineDriver
+        if driver is not None:
+            self.driver = driver
+        elif cfg["car"].get("trajectory_csv"):
+            from ..car.trajectory_io import TrajectoryDriver
+            self.driver = TrajectoryDriver(cfg["car"]["trajectory_csv"], car_cfg=cfg["car"])
+        else:
+            self.driver = CenterlineDriver(self.track, cfg["car"])
+
         self.renderer = CameraRenderer(
             self.model, self.cam_cfg,
             msaa_samples=cfg["perception"].get("render", {}).get("msaa_samples"))
@@ -56,7 +65,7 @@ class Simulation:
 
     def step_to(self, t):
         st = self.driver.state_at(t)
-        self.data.mocap_pos[0] = [st.x, st.y, 0.0]
+        self.data.mocap_pos[0] = [st.x, st.y, st.z]
         self.data.mocap_quat[0] = euler_to_quat(st.yaw, st.pitch, st.roll)
         mujoco.mj_forward(self.model, self.data)
         self.t = t

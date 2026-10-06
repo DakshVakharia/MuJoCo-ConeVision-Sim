@@ -40,6 +40,7 @@ struct RosConfig {               // config/perception.yaml -> ros:
   std::string odom_topic = "/sim/ground_truth/odom";
   bool publish_imu = false;
   std::string imu_topic = "/sim/imu";
+  std::string imu_frame_id = "base_link";          // frame_id for IMU messages
   double realtime_factor = 1.0;
   bool publish_clock = false;
   std::string time_mode = "realtime";              // realtime | lockstep

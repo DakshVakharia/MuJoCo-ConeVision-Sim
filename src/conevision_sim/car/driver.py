@@ -28,6 +28,13 @@ class CarState:
     pitch: float = 0.0    # rad, positive = nose down
     v: float = 0.0        # m/s forward
     yaw_rate: float = 0.0  # rad/s
+    z: float = 0.0        # m, vertical offset of base_link from ground
+    ax: float = 0.0       # m/s^2, specific force in body frame (x fwd)
+    ay: float = 0.0       # m/s^2, specific force in body frame (y left)
+    az: float = 9.81      # m/s^2, specific force in body frame (z up), gravity included
+    wx: float = 0.0       # rad/s, angular velocity in body frame (roll rate)
+    wy: float = 0.0       # rad/s, angular velocity in body frame (pitch rate)
+    wz: float = 0.0       # rad/s, angular velocity in body frame (yaw rate)
 
 
 def _periodic_arclength_table(centerline, ds, smooth_m):
